@@ -31,7 +31,6 @@ public class Minesweeper {
     }
 
     private void placeMines(int mines) {
-
         int randomColumn, randomRow;
         Random random = new Random();
 
@@ -43,6 +42,4 @@ public class Minesweeper {
 
         }
     }
-
-
 }
