@@ -1,4 +1,4 @@
-
+import java.util.Random;
 
 public class Minesweeper {
     // this class will handle game board set up and logic for selecting/flagging cells
@@ -18,11 +18,11 @@ public class Minesweeper {
 
         setUpBoard();
         placeMines(mines);
+
     }
 
     private void setUpBoard() {
         board = new Cell[boardRows][boardColumns];
-
         for(int i = 0; i < boardColumns; i++) {
             for (int j = 0; j < boardRows; j++) {
                 board[i][j] = new Cell(i, j);
@@ -31,10 +31,18 @@ public class Minesweeper {
     }
 
     private void placeMines(int mines) {
+
         int randomColumn, randomRow;
+        Random random = new Random();
+
         for(int i = 0; i < boardMines; i++) {
-            
+            randomColumn = random.nextInt(boardColumns);
+            randomRow = random.nextInt(boardRows);
+
+            board[randomColumn][randomRow].placeMine();
+
         }
     }
+
 
 }
