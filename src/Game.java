@@ -1,5 +1,8 @@
 import java.awt.Frame;
 import java.awt.GridLayout;
+import java.awt.Menu;
+import java.awt.MenuBar;
+import java.awt.MenuItem;
 import java.awt.Panel;
 import java.awt.event.*;
 
@@ -11,13 +14,24 @@ public class Game extends Frame implements WindowListener{
         
         Panel pnl = new Panel();
 
+        MenuBar menuBar = new MenuBar();
+        setMenuBar(menuBar);
+
+        Menu menu = new Menu("Game");
+        menuBar.add(menu);
+
+        MenuItem newGameItem = new MenuItem("New Game");
+
+        menu.add(newGameItem);
+        
+
         add(pnl);
         addWindowListener(this);
 
         setTitle("Minesweeper");
         setSize(300, 300);
+
         setVisible(true);
-        
     }
 
     public void windowClosed(WindowEvent e) {
