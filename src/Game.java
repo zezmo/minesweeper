@@ -22,13 +22,17 @@ public class Game extends Frame implements WindowListener{
     private int tileSize;
     private int gameMines;
 
-
     public Game () {
         gameColumns = 9;
         gameRows = 9;
         tileSize = 16;
-        setLayout(new BorderLayout());
-        
+        setLayout(new FlowLayout());
+
+        //outer parent panel for the rest of the elements
+        Panel outerPnl = new Panel();
+        outerPnl.setLayout(new BorderLayout());
+        outerPnl.setSize(900, 300);
+
         //top panel for timer, mine count, and new game
         Panel topPnl = new Panel();
         topPnl.setLayout(new GridLayout(1, 3));
@@ -41,14 +45,14 @@ public class Game extends Frame implements WindowListener{
 
         //game panel for cover tiles and board
         Panel gamePnl = new Panel();
-        gamePnl.setMinimumSize(new Dimension(16*9, 16*9));
-        gamePnl.setMaximumSize(new Dimension(16*9, 16*9));
+        gamePnl.setSize(160, 160);
         gamePnl.setLayout(new GridLayout(9, 9));
         boardTile = new Button[gameRows][gameColumns];
+
         for (int i=0; i < gameColumns; i++) {
             for (int j=0; j < gameRows; j++) {
                 boardTile[i][j] = new Button();
-                boardTile[i][j].setSize(16, 16);
+                boardTile[i][j].setPreferredSize(new Dimension(24, 24));
                 gamePnl.add(boardTile[i][j]);
             }
         }
@@ -61,13 +65,15 @@ public class Game extends Frame implements WindowListener{
         MenuItem difficultyMenuItem = new MenuItem("Difficulty");
         menu.add(difficultyMenuItem);
 
-        //add elements to Frame
-        add(topPnl, BorderLayout.PAGE_START);
-        add(gamePnl, BorderLayout.CENTER);
+        //add elements
+        outerPnl.add(topPnl, BorderLayout.PAGE_START);
+        outerPnl.add(gamePnl);
+
+        add(outerPnl);
         addWindowListener(this);
 
         setTitle("Minesweeper");
-        setSize(900, 600);
+        setSize(600, 600);
 
         setVisible(true);
     }
