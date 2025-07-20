@@ -16,7 +16,7 @@ public class Game extends Frame implements WindowListener{
     private int tileSize;
     private Button[][] boardTile;
 
-    public void SetUpGame (int columns, int rows, int mines, Cell[][] cell) {
+    public void SetUpGame (int rows, int columns,  int mines, Cell[][] cell) {
         tileSize = 16;
         setLayout(new FlowLayout());
 
@@ -37,12 +37,12 @@ public class Game extends Frame implements WindowListener{
 
         //game panel for cover tiles and board
         Panel gamePnl = new Panel();
-        gamePnl.setSize(160, 160);
-        gamePnl.setLayout(new GridLayout(9, 9));
+        gamePnl.setSize((rows+1)*16, (columns+1) * 16);
+        gamePnl.setLayout(new GridLayout(rows, columns));
         boardTile = new Button[rows][columns];
 
-        for (int i=0; i < columns; i++) {
-            for (int j=0; j < rows; j++) {
+        for (int i=0; i < rows; i++) {
+            for (int j=0; j < columns; j++) {
                 boardTile[i][j] = new Button();
                 boardTile[i][j].setPreferredSize(new Dimension(tileSize, tileSize));
                 boardTile[i][j].setLabel(String.valueOf(cell[i][j].cellMinesNearby));

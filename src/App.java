@@ -3,8 +3,7 @@ public class App {
         Minesweeper model = new Minesweeper();
         Game view = new Game();
         GameController controller = new GameController(view, model);
-
-        controller.selectDifficulty("easy");
+        
         controller.setUpGame();
 
     }

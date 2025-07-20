@@ -26,12 +26,12 @@ public class GameController {
         
     }
 
-    public int getCellLabel(int column, int row) {
+    public int getCellLabel(int row, int column) {
         return model.getBoardCellValue(row, column);
     }
 
     public void setUpGame() {
-        view.SetUpGame(model.getColumns(), model.getRows(), model.getMines(), model.getBoardCells());
+        view.SetUpGame(model.getRows(), model.getColumns(), model.getMines(), model.getBoardCells());
     }
 }
 

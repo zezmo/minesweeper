@@ -17,7 +17,7 @@ public class Minesweeper {
         //this.boardRows = rows;
         //this.boardColumns = columns;
         //this.boardMines = mines;
-        setDifficulty("easy");
+        setDifficulty("expert");
         setUpBoard();
         placeMines();
         scanForMines();
@@ -31,14 +31,14 @@ public class Minesweeper {
                 this.gameMines = 10;
                 break;
             case "intermediate":
-                this.gameColumns = 9;
-                this.gameRows = 9;
-                this.gameMines = 10;
+                this.gameColumns = 16;
+                this.gameRows = 16;
+                this.gameMines = 40;
                 break;
             case "expert":
-                this.gameColumns = 9;
-                this.gameRows = 9;
-                this.gameMines = 10;
+                this.gameColumns = 16;
+                this.gameRows = 30;
+                this.gameMines = 99;
                 break;
             default:
                 System.out.println("Select difficulty");
@@ -55,33 +55,34 @@ public class Minesweeper {
     }
 
     public int getBoardCellValue(int row, int column) {
-        return this.board[column][row].getCellLabel();
+        return this.board[row][column].getCellLabel();
     }
 
     private void setUpBoard() {
         this.board = new Cell[gameRows][gameColumns];
-        for(int i = 0; i < gameColumns; i++) {
-            for (int j = 0; j < gameRows; j++) {
+        for(int i = 0; i < gameRows; i++) {
+            for (int j = 0; j < gameColumns; j++) {
                 this.board[i][j] = new Cell();
             }
         }
     }
 
     private void placeMines() {
-        int randomColumn, randomRow;
+        int randomRow, randomColumn;
         Random random = new Random();
 
         for (int i = 0; i < gameMines; i++) {
-            randomColumn = random.nextInt(gameColumns);
             randomRow = random.nextInt(gameRows);
+            randomColumn = random.nextInt(gameColumns);
 
-            board[randomColumn][randomRow].placeMine();
+
+            board[randomRow][randomColumn].placeMine();
 
         }
     }
 
     public int getMine(int x, int y) {
-        if (x >= 0 && x < gameColumns && y >= 0 && y < gameRows) {
+        if (x >= 0 && x < gameRows && y >= 0 && y < gameColumns) {
             if(board[x][y].cellMine) {
                 return 1;
             }
@@ -106,8 +107,8 @@ public class Minesweeper {
         *    // first scanning method that came to mind might want to make this more efficient somehow
         *    // need to skip out of bounds for the array
         */ 
-        for (int i = 0; i < gameColumns; i++) {
-            for (int j = 0; j < gameRows; j++) {
+        for (int i = 0; i < gameRows; i++) {
+            for (int j = 0; j < gameColumns; j++) {
                 //skip the scan if current cell has a mine
                 if( !board[i][j].cellMine ) {
                     int count = 0;
