@@ -18,7 +18,6 @@ public class Game extends Frame implements WindowListener{
 
     public void SetUpGame (int columns, int rows, int mines, Cell[][] cell) {
         tileSize = 16;
-
         setLayout(new FlowLayout());
 
         //outer parent panel for the rest of the elements

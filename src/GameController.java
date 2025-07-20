@@ -3,8 +3,8 @@ public class GameController {
     private Game view;
 
     public GameController (Game view, Minesweeper model) {
-        this.view = new Game();
         this.model = new Minesweeper();
+        this.view = new Game();
     }
 
     //call when menu inputs for difficulty are selected
@@ -31,7 +31,7 @@ public class GameController {
     }
 
     public void setUpGame() {
-        view.SetUpGame(getColumns(), getRows(), getMines(), model.getBoardCells());
+        view.SetUpGame(model.getColumns(), model.getRows(), model.getMines(), model.getBoardCells());
     }
 }
 

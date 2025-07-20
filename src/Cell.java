@@ -29,8 +29,8 @@ public class Cell extends Button{
         this.cellFlag = true;
     }
 
-    public void incrementMines() {
-        this.cellMinesNearby++;
+    public void setNearbyMines(int mines) {
+        this.cellMinesNearby = mines;
     }
     public int getCellLabel() {
         return this.cellMinesNearby;

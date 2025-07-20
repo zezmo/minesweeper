@@ -17,6 +17,7 @@ public class Minesweeper {
         //this.boardRows = rows;
         //this.boardColumns = columns;
         //this.boardMines = mines;
+        setDifficulty("easy");
         setUpBoard();
         placeMines();
         scanForMines();
@@ -28,16 +29,20 @@ public class Minesweeper {
                 this.gameColumns = 9;
                 this.gameRows = 9;
                 this.gameMines = 10;
+                break;
             case "intermediate":
                 this.gameColumns = 9;
                 this.gameRows = 9;
                 this.gameMines = 10;
+                break;
             case "expert":
                 this.gameColumns = 9;
                 this.gameRows = 9;
                 this.gameMines = 10;
+                break;
             default:
                 System.out.println("Select difficulty");
+                break;
         }
     }
     
@@ -75,6 +80,16 @@ public class Minesweeper {
         }
     }
 
+    public int getMine(int x, int y) {
+        if (x >= 0 && x < gameColumns && y >= 0 && y < gameRows) {
+            if(board[x][y].cellMine) {
+                return 1;
+            }
+        }
+        return 0;
+    }
+
+
     private void scanForMines () {
         /*
         *    ex:
@@ -89,38 +104,15 @@ public class Minesweeper {
         *        1[ ][ ][ ]
         *
         *    // first scanning method that came to mind might want to make this more efficient somehow
+        *    // need to skip out of bounds for the array
         */ 
         for (int i = 0; i < gameColumns; i++) {
             for (int j = 0; j < gameRows; j++) {
                 //skip the scan if current cell has a mine
                 if( !board[i][j].cellMine ) {
-                    //check row above
-                    if ( board[i-1][j-1].cellMine) {
-                        board[i][j].cellMinesNearby++;
-                    }
-                    if ( board[i][j-1].cellMine) {
-                        board[i][j].cellMinesNearby++;
-                    }
-                    if ( board[i+1][j-1].cellMine) {
-                        board[i][j].cellMinesNearby++;
-                    }
-                    //check each side
-                    if ( board[i-1][j].cellMine) {
-                        board[i][j].cellMinesNearby++;
-                    }
-                    if ( board[i+1][j].cellMine) {
-                        board[i][j].cellMinesNearby++;
-                    }
-                    //check row below
-                    if ( board[i-1][j+1].cellMine) {
-                        board[i][j].cellMinesNearby++;
-                    }
-                    if ( board[i][j+1].cellMine) {
-                        board[i][j].cellMinesNearby++;
-                    }
-                    if ( board[i+1][j+1].cellMine) {
-                        board[i][j].cellMinesNearby++;
-                    }
+                    int count = 0;
+                    count = getMine(i-1, j-1) + getMine(i-1, j) + getMine(i-1, j+1) + getMine(i, j-1) + getMine(i, j+1) + getMine(i+1, j+1) + getMine(i+1, j) + getMine(i+1, j-1);
+                    board[i][j].setNearbyMines(count);
                 }
             }
         }
