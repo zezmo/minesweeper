@@ -11,21 +11,18 @@ import java.awt.MenuItem;
 import java.awt.Panel;
 import java.awt.event.*;
 
-// =========================
-// reminder to set up layout all elements in one child element from parent element
-//==========================
-
+// view
 public class Game extends Frame implements WindowListener{    
-    private Button[][] boardTile;
-    private int gameColumns;
-    private int gameRows;
+    private GameController controller;
     private int tileSize;
-    private int gameMines;
+    private Button[][] boardTile;
 
-    public Game () {
-        gameColumns = 9;
-        gameRows = 9;
+    public void SetUpGame (int columns, int rows, int mines, Cell[][] cell[][]) {
         tileSize = 16;
+        columns = controller.getColumns();
+        rows = controller.getRows();
+        mines = controller.getMines();
+
         setLayout(new FlowLayout());
 
         //outer parent panel for the rest of the elements
@@ -47,12 +44,13 @@ public class Game extends Frame implements WindowListener{
         Panel gamePnl = new Panel();
         gamePnl.setSize(160, 160);
         gamePnl.setLayout(new GridLayout(9, 9));
-        boardTile = new Button[gameRows][gameColumns];
+        boardTile = new Button[rows][columns];
 
-        for (int i=0; i < gameColumns; i++) {
-            for (int j=0; j < gameRows; j++) {
+        for (int i=0; i < columns; i++) {
+            for (int j=0; j < rows; j++) {
                 boardTile[i][j] = new Button();
-                boardTile[i][j].setPreferredSize(new Dimension(24, 24));
+                boardTile[i][j].setPreferredSize(new Dimension(tileSize, tileSize));
+                boardTile[i][j].setLabel(String.valueOf(controller.getCellLabel(i, j)));
                 gamePnl.add(boardTile[i][j]);
             }
         }
@@ -78,12 +76,6 @@ public class Game extends Frame implements WindowListener{
         setVisible(true);
     }
 
-    //use this to listen to menu inputs later
-    public void setDifficulty() {
-        gameColumns = 9;
-        gameRows = 9;
-        gameMines = 10;
-    }
 
     public void windowClosed(WindowEvent e) {
     }
@@ -101,7 +93,4 @@ public class Game extends Frame implements WindowListener{
     public void windowDeactivated(WindowEvent e) {
     }
 
-    public static void main(String[] args) {
-        new Game();
-    }
 }
