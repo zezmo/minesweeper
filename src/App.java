@@ -2,9 +2,10 @@ public class App {
     public static void main(String[] args) throws Exception {
         Minesweeper model = new Minesweeper();
         Game view = new Game();
-        GameController controller = new GameController();
+        GameController controller = new GameController(view, model);
 
-        //controller.updateview();
-    
+        controller.selectDifficulty("easy");
+        controller.setUpGame();
+
     }
 }

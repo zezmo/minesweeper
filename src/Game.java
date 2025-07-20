@@ -13,15 +13,11 @@ import java.awt.event.*;
 
 // view
 public class Game extends Frame implements WindowListener{    
-    private GameController controller;
     private int tileSize;
     private Button[][] boardTile;
 
-    public void SetUpGame (int columns, int rows, int mines, Cell[][] cell[][]) {
+    public void SetUpGame (int columns, int rows, int mines, Cell[][] cell) {
         tileSize = 16;
-        columns = controller.getColumns();
-        rows = controller.getRows();
-        mines = controller.getMines();
 
         setLayout(new FlowLayout());
 
@@ -50,7 +46,7 @@ public class Game extends Frame implements WindowListener{
             for (int j=0; j < rows; j++) {
                 boardTile[i][j] = new Button();
                 boardTile[i][j].setPreferredSize(new Dimension(tileSize, tileSize));
-                boardTile[i][j].setLabel(String.valueOf(controller.getCellLabel(i, j)));
+                boardTile[i][j].setLabel(String.valueOf(cell[i][j].cellMinesNearby));
                 gamePnl.add(boardTile[i][j]);
             }
         }
@@ -74,8 +70,7 @@ public class Game extends Frame implements WindowListener{
         setSize(600, 600);
 
         setVisible(true);
-    }
-
+    } 
 
     public void windowClosed(WindowEvent e) {
     }

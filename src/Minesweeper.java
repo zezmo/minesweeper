@@ -25,35 +25,39 @@ public class Minesweeper {
     public void setDifficulty(String difficulty) {
         switch(difficulty) {
             case "easy":
-                gameColumns = 9;
-                gameRows = 9;
-                gameMines = 10;
+                this.gameColumns = 9;
+                this.gameRows = 9;
+                this.gameMines = 10;
             case "intermediate":
-                gameColumns = 9;
-                gameRows = 9;
-                gameMines = 10;
+                this.gameColumns = 9;
+                this.gameRows = 9;
+                this.gameMines = 10;
             case "expert":
-                gameColumns = 9;
-                gameRows = 9;
-                gameMines = 10;
+                this.gameColumns = 9;
+                this.gameRows = 9;
+                this.gameMines = 10;
             default:
                 System.out.println("Select difficulty");
         }
     }
     
-    public int getColumns() {return gameColumns;}
-    public int getRows() {return gameRows;}
-    public int getMines() {return gameMines;}
-    
+    public int getColumns() {return  this.gameColumns;}
+    public int getRows() {return this.gameRows;}
+    public int getMines() {return this.gameMines;}
+
+    public Cell[][] getBoardCells() {
+        return this.board;
+    }
+
     public int getBoardCellValue(int row, int column) {
-        return board[column][row].getCellLabel();
+        return this.board[column][row].getCellLabel();
     }
 
     private void setUpBoard() {
-        board = new Cell[gameRows][gameColumns];
+        this.board = new Cell[gameRows][gameColumns];
         for(int i = 0; i < gameColumns; i++) {
             for (int j = 0; j < gameRows; j++) {
-                board[i][j] = new Cell();
+                this.board[i][j] = new Cell();
             }
         }
     }
