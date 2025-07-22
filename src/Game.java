@@ -1,10 +1,10 @@
 public class Game {
-    private Minesweeper model;
-    private GameBoard view;
+    private Board model;
+    private Window view;
 
-    public Game (GameBoard view, Minesweeper model) {
-        this.model = new Minesweeper();
-        this.view = new GameBoard();
+    public Game (Window view, Board model) {
+        this.model = new Board();
+        this.view = new Window();
     }
 
     //call when menu inputs for difficulty are selected
@@ -34,4 +34,3 @@ public class Game {
         view.SetUpGame(model.getRows(), model.getColumns(), model.getMines(), model.getBoardCells());
     }
 }
-

@@ -1,97 +1,124 @@
-import javax.swing.*;
-import javax.swing.plaf.basic.BasicTabbedPaneUI.MouseHandler;
+import java.util.Random;
 
-import java.awt.*;
-import java.awt.event.*;
+public class Board{
+    // this class will handle game board set up and logic for selecting/flagging cells
+    // determines the number of rows, columns, and mines. Used for difficulty setting or custom layouts.
+    // easy            9x9      10 mines
+    // intermediate    16x16    40 mines
+    // expert          30x16    99 mines
+    // add option to enter custom row, column, mines
+    int gameColumns;
+    int gameRows;
+    int gameMines;
+    Cell[][] board;
 
-public class Board extends Panel{
-    private Board gameBoard;
-    private static final int tileSize = 24;
-    private int width, height;
-    private Label[][] boardTiles;
-    private GameWindow gameWindow;
-
-    public Board(GameWindow g) {
-        gameWindow = g;
+    public Board() {
+        //this.boardRows = rows;
+        //this.boardColumns = columns;
+        //this.boardMines = mines;
+        setDifficulty("expert");
         
+        setUpBoard();
+        placeMines();
+        scanForMines();
     }
 
-    public void setUpBoard (int rows, int columns, ) {
-        removeAll();
+    public void setDifficulty(String difficulty) {
+        switch(difficulty) {
+            case "easy":
+                this.gameColumns = 9;
+                this.gameRows = 9;
+                this.gameMines = 10;
+                break;
+            case "intermediate":
+                this.gameColumns = 16;
+                this.gameRows = 16;
+                this.gameMines = 40;
+                break;
+            case "expert":
+                this.gameColumns = 16;
+                this.gameRows = 30;
+                this.gameMines = 99;
+                break;
+            default:
+                System.out.println("Select difficulty");
+                break;
+        }
+    }
+    
+    public int getColumns() {return  this.gameColumns;}
+    public int getRows() {return this.gameRows;}
+    public int getMines() {return this.gameMines;}
 
-        height = 900;
-        width = 900;
+    public Cell[][] getBoardCells() {
+        return this.board;
+    }
 
-        setSize(width, height);
-        setLayout(new GridLayout(rows, columns));
-        MouseHandler mouseListener = new MouseHandler();
-        boardTiles = new Label[rows][columns];
-        Dimension cellDimension = new Dimension(tileSize, tileSize);
+    public int getBoardCellValue(int row, int column) {
+        return this.board[row][column].getCellLabel();
+    }
 
-        for (int i=0; i < rows; i++) {
-            for (int j=0; j < columns; j++) {
-                Label label = new Label();
-                label.setPreferredSize(cellDimension);
-                label.setText();
-        
+    //1. create empty board
+    private void setUpBoard() {
+        this.board = new Cell[gameRows][gameColumns];
+        for(int i = 0; i < gameRows; i++) {
+            for (int j = 0; j < gameColumns; j++) {
+                this.board[i][j] = new Cell();
             }
         }
     }
 
-    public void setUpGame (int rows, int columns,  int mines, Cell[][] cell) {
-        setLayout(new FlowLayout());
+    //2. add mines to empty board
+    private void placeMines() {
+        int randomRow, randomColumn;
+        Random random = new Random();
 
-        //outer parent panel for the rest of the elements
-        Panel outerPnl = new Panel();
-        outerPnl.setLayout(new BorderLayout());
-        outerPnl.setSize(900, 300);
+        for (int i = 0; i < gameMines; i++) {
+            randomRow = random.nextInt(gameRows);
+            randomColumn = random.nextInt(gameColumns);
 
-        //top panel for timer, mine count, and new game
-        Panel topPnl = new Panel();
-        topPnl.setLayout(new GridLayout(1, 3));
-        Label timerLabel = new Label("Timer");
-        Label newLabel = new Label("new");
-        Label minesLabel = new Label("mines");
-        topPnl.add(timerLabel);
-        topPnl.add(newLabel);
-        topPnl.add(minesLabel);
 
-        //game panel for cover tiles and board
-        Panel gamePnl = new Panel();
-        gamePnl.setSize((rows+1)*16, (columns+1) * 16);
-        gamePnl.setLayout(new GridLayout(rows, columns));
-        boardTile = new Button[rows][columns];
+            board[randomRow][randomColumn].placeMine();
 
-        for (int i=0; i < rows; i++) {
-            for (int j=0; j < columns; j++) {
-                boardTile[i][j] = new Button();
-                boardTile[i][j].setPreferredSize(new Dimension(tileSize, tileSize));
-                boardTile[i][j].setLabel(String.valueOf(cell[i][j].cellMinesNearby));
-                gamePnl.add(boardTile[i][j]);
+        }
+    }
+
+    //3. set values for tiles
+    private void scanForMines () {
+        /*
+        *    ex:
+        *        [*][1][0][0]
+        *        [1][2][1][1]
+        *        [0][0][0][*]
+        *
+        *    checking for cell x at [i][j]
+        *         -1  0  1
+        *       -1[ ][ ][ ]
+        *        0[ ][x][ ]
+        *        1[ ][ ][ ]
+        *
+        *    // first scanning method that came to mind might want to make this more efficient somehow
+        *    // need to skip out of bounds for the array
+        */ 
+        for (int i = 0; i < gameRows; i++) {
+            for (int j = 0; j < gameColumns; j++) {
+                //skip the scan if current cell has a mine
+                if( !board[i][j].cellMine ) {
+                    int count = 0;
+                    count = getMine(i-1, j-1) + getMine(i-1, j) + getMine(i-1, j+1) + getMine(i, j-1) + getMine(i, j+1) + getMine(i+1, j+1) + getMine(i+1, j) + getMine(i+1, j-1);
+                    board[i][j].setNearbyMines(count);
+                }
             }
         }
+    }
 
-        // set up menu bar, sub menu for difficulty
-        MenuBar menuBar = new MenuBar();
-        
-        Menu menu = new Menu("Game");
-        menuBar.add(menu);
-        MenuItem difficultyMenuItem = new MenuItem("Difficulty");
-        menu.add(difficultyMenuItem);
-
-        //add elements
-        outerPnl.add(topPnl, BorderLayout.PAGE_START);
-        outerPnl.add(gamePnl);
-
-        add(outerPnl);
-        addWindowListener(this);
-
-        setTitle("Minesweeper");
-        setSize(600, 600);
-
-        setVisible(true);
-    } 
-
-
-
+    //helper for getting nearby mines
+    public int getMine(int x, int y) {
+        if (x >= 0 && x < gameRows && y >= 0 && y < gameColumns) {
+            if(board[x][y].cellMine) {
+                return 1;
+            }
+        }
+        return 0;
+    }
 }

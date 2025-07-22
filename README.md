@@ -1,3 +1,3 @@
 ## About this project
 
-Planning to create a minesweeper game. Looking to practice creating a java application with GUI.
+Planning to create a clone minesweeper game. Practice creating a java application with GUI using MVC pattern.

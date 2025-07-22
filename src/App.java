@@ -1,7 +1,7 @@
 public class App {
     public static void main(String[] args) throws Exception {
-        Minesweeper model = new Minesweeper();
-        GameBoard view = new GameBoard();
+        Board model = new Board();
+        Window view = new Window();
         Game controller = new Game(view, model);
         
         controller.setUpGame();

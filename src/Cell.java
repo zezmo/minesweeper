@@ -18,25 +18,37 @@ public class Cell extends Button{
         cellLabel = "";
     }
 
+
+
+    public boolean getMine() {
+        return mine;
+    }
+
+    public void setMine(boolean m) {
+        this.mine = m;
+    }
+
+    public String getCellLabel() {
+        return cellLabel;
+    }
+
+    public void setCellLabel(String l) {
+        this.cellLabel = l;
+    }
+
+    public boolean getFlag() {
+        return flag;
+    }
     
-
-    public void placeMine() {
-        this.cellMine = true;
-        this.cellMinesNearby = -1;
+    public void setFlag(boolean f) {
+        this.flag = f;
     }
 
-    public void showCell() {
-        this.cellShow = true;
+    public void setNearbyMines(int nearby) {
+        this.minesNearby = nearby;
     }
 
-    public void flagCell() {
-        this.cellFlag = true;
-    }
-
-    public void setNearbyMines(int mines) {
-        this.cellMinesNearby = mines;
-    }
-    public int getCellLabel() {
-        return this.cellMinesNearby;
+    public int getNearbyMines() {
+        return minesNearby;
     }
 }
