@@ -3,18 +3,22 @@
 import java.awt.Button;
 
 public class Cell extends Button{
-    int cellMinesNearby;
-    boolean cellMine;
-    boolean cellFlag;
-    boolean cellShow;
+    private boolean mine;
+    private boolean flag;
+    private int minesNearby;
+    private String cellLabel;
+
+    
 
     public Cell() {
         //make new cell with default values
-        this.cellFlag = false;
-        this.cellShow = true; //true to test view
-        this.cellMinesNearby = 0;
-        this.cellMine = false;
+        mine = false;
+        flag = true; //true to test view
+        minesNearby = 0;
+        cellLabel = "";
     }
+
+    
 
     public void placeMine() {
         this.cellMine = true;

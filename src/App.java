@@ -1,8 +1,8 @@
 public class App {
     public static void main(String[] args) throws Exception {
         Minesweeper model = new Minesweeper();
-        Game view = new Game();
-        GameController controller = new GameController(view, model);
+        GameBoard view = new GameBoard();
+        Game controller = new Game(view, model);
         
         controller.setUpGame();
 
