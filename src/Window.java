@@ -8,8 +8,10 @@ import javax.swing.JPanel;
 
 public class Window extends Frame implements WindowListener {
     private final String title = "Minesweeper";
-    private int width, height;
-    private Window gameWindow;
+    private final int width = 600, height = 400;
+    private final int tileSize = 16;
+
+    //private Window gameWindow;
     private JPanel outerPanel;
 
     private MenuBar menuBar;
@@ -40,6 +42,7 @@ public class Window extends Frame implements WindowListener {
     private Icon question;
 
     public Window(int row, int column, int mine) {
+        setIcons();
         this.rows = row;
         this.columns = column;
         this.mines = mine;
@@ -52,11 +55,12 @@ public class Window extends Frame implements WindowListener {
         topPanel = new JPanel();
         gamePanel = new JPanel();
         gamePanel.setLayout(new GridLayout(rows, columns, 0, 0));
+        gamePanel.setSize(rows*tileSize, columns*tileSize);
 
         for (int i=0; i < rows; i++) {
             for (int j=0; j < columns; j++) {
                 tiles[i][j] = new JButton("");
-                tiles[i][j].setIcon(new ImageIcon(getClass().getResource("/media/tile.png")));
+                //tiles[i][j].setIcon(new ImageIcon(getClass().getResource("/media/tile.png")));
                 tiles[i][j].setName(Integer.toString(i) + "," + Integer.toString(j));
 
                 gamePanel.add(tiles[i][j]);
@@ -67,6 +71,7 @@ public class Window extends Frame implements WindowListener {
         outerPanel.add(topPanel);
         outerPanel.add(gamePanel);
 
+        setSize(width, height);
         add(outerPanel);
 
     }   
@@ -80,6 +85,59 @@ public class Window extends Frame implements WindowListener {
 
             }
         }
+    }
+
+    public void setIcons() {
+        mineIcon = new ImageIcon(getClass().getResource("/media/mine.png"));
+        tileIcon = new ImageIcon(getClass().getResource("/media/tile.png"));
+        flagIcon = new ImageIcon(getClass().getResource("/media/flag.png"));
+        one = new ImageIcon(getClass().getResource("/media/one.png"));
+        two = new ImageIcon(getClass().getResource("/media/two.png"));
+        three = new ImageIcon(getClass().getResource("/media/three.png"));
+        four = new ImageIcon(getClass().getResource("/media/four.png"));
+        five = new ImageIcon(getClass().getResource("/media/five.png"));
+        six = new ImageIcon(getClass().getResource("/media/six.png"));
+        seven = new ImageIcon(getClass().getResource("/media/seven.png"));
+        eight = new ImageIcon(getClass().getResource("/media/eight.png"));
+        zero = new ImageIcon(getClass().getResource("/media/zero.png"));
+        question = new ImageIcon(getClass().getResource("/media/question.png"));
+    }
+
+    public Icon getMineIcon() {
+        return mineIcon;
+    }
+    public Icon getTileIcon() {
+        return tileIcon;
+    }
+    public Icon getOneIcon() {
+        return one;
+    }
+    public Icon getTwoIcon() {
+        return two;
+    }
+    public Icon getThreeIcon() {
+        return three;
+    }
+    public Icon getFourIcon() {
+        return four;
+    }
+    public Icon getFiveIcon() {
+        return five;
+    }
+    public Icon getSixIcon() {
+        return six;
+    }
+    public Icon getSevenIcon() {
+        return seven;
+    }
+    public Icon getEightIcon() {
+        return eight;
+    }
+    public Icon getZeroIcon() {
+        return zero;
+    }
+    public Icon getQuestionIcon() {
+        return question;
     }
 
     public JButton[][] getTiles() {return tiles; }

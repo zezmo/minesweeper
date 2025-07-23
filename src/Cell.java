@@ -39,7 +39,7 @@ public class Cell extends Button{
     public boolean getFlag() {
         return flag;
     }
-    
+
     public void setFlag(boolean f) {
         this.flag = f;
     }
@@ -51,4 +51,6 @@ public class Cell extends Button{
     public int getNearbyMines() {
         return minesNearby;
     }
+
+    
 }

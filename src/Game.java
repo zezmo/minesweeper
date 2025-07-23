@@ -16,8 +16,10 @@ public class Game implements MouseListener, ActionListener, WindowListener{
     public Game (String difficulty) {
         newBoardSetUp(difficulty);
         this.window = new Window(board.getRows(), board.getColumns(), board.getMines());
-
         this.gameRunning = false;
+        setButtonImage();
+        window.setVisible(true);
+
 
     }
 
@@ -27,10 +29,10 @@ public class Game implements MouseListener, ActionListener, WindowListener{
                 this.board = new Board(9, 9, 10);
                 break;
             case "intermediate": 
-                this.board = new Board(9, 9, 10);
+                this.board = new Board(16, 16, 40);
                 break;
             case "expert": 
-                this.board = new Board(9, 9, 10);
+                this.board = new Board(16, 32, 99);
                 break;
             default: 
                 break;
@@ -38,16 +40,50 @@ public class Game implements MouseListener, ActionListener, WindowListener{
     }
 
     public void setButtonImage() {
-        Cell cells[][] = board.getBoard();
+        Cell cells[][] = board.getBoardCells();
         JButton buttons[][] = window.getTiles();
 
         for (int i=0; i < board.getRows(); i++) {
             for (int j=0; j < board.getColumns(); j++) {
                 buttons[i][j].setIcon(null);
+                String whichIcon = board.whichIcon(i, j);
 
-                if (cells[i][j].getLabel() == "") {
-
+                if (cells[i][j].getMine()) {
+                    buttons[i][j].setIcon(window.getMineIcon());
+                } else {
+                    switch (whichIcon) {
+                        case "0":
+                            buttons[i][j].setIcon(window.getZeroIcon());
+                            break;
+                        case "1":
+                            buttons[i][j].setIcon(window.getOneIcon());
+                            break;
+                        case "2":
+                            buttons[i][j].setIcon(window.getTwoIcon());
+                            break;
+                        case "3":
+                            buttons[i][j].setIcon(window.getThreeIcon());
+                            break;
+                        case "4":
+                            buttons[i][j].setIcon(window.getFourIcon());
+                            break;
+                        case "5":
+                            buttons[i][j].setIcon(window.getFiveIcon());
+                            break;
+                        case "6":
+                            buttons[i][j].setIcon(window.getSixIcon());
+                            break;
+                        case "7":
+                            buttons[i][j].setIcon(window.getSevenIcon());
+                            break;
+                        case "8":
+                            buttons[i][j].setIcon(window.getEightIcon());
+                            break;
+                        default: 
+                            break;
+                    }
                 }
+
             }
         }
     }
@@ -66,8 +102,8 @@ public class Game implements MouseListener, ActionListener, WindowListener{
             int row = Integer.parseInt(coords[0]);
             int column = Integer.parseInt(coords[1]);
 
-            boolean checkIfMine = board.getBoard()[row][column].getMine();
-            int nearbyMines = board.getBoard()[row][column].getNearbyMines();
+            boolean checkIfMine = board.getBoardCells()[row][column].getMine();
+            int nearbyMines = board.getBoardCells()[row][column].getNearbyMines();
 
             if (SwingUtilities.isLeftMouseButton(e)) {
 

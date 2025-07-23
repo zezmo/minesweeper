@@ -10,7 +10,7 @@ public class Board{
     int gameColumns;
     int gameRows;
     int gameMines;
-    Cell[][] board;
+    Cell boardCells[][] ;
 
     public Board(int rows, int columns, int numMines) {
         this.gameRows = rows;
@@ -24,10 +24,10 @@ public class Board{
     
     //1. create empty board
     private void setUpBoard() {
-        this.board = new Cell[gameRows][gameColumns];
+        this.boardCells = new Cell[gameRows][gameColumns];
         for(int i = 0; i < gameRows; i++) {
             for (int j = 0; j < gameColumns; j++) {
-                this.board[i][j] = new Cell();
+                this.boardCells[i][j] = new Cell();
             }
         }
     }
@@ -40,7 +40,7 @@ public class Board{
         for (int i = 0; i < gameMines; i++) {
             randomRow = random.nextInt(gameRows);
             randomColumn = random.nextInt(gameColumns);
-            board[randomRow][randomColumn].setMine(true);
+            boardCells[randomRow][randomColumn].setMine(true);
         }
     }
 
@@ -49,10 +49,10 @@ public class Board{
         for (int i = 0; i < gameRows; i++) {
             for (int j = 0; j < gameColumns; j++) {
                 //skip the scan if current cell has a mine
-                if( !board[i][j].getMine() ) {
+                if( !boardCells[i][j].getMine() ) {
                     int count = 0;
                     count = validCellMine(i-1, j-1) + validCellMine(i-1, j) + validCellMine(i-1, j+1) + validCellMine(i, j-1) + validCellMine(i, j+1) + validCellMine(i+1, j+1) + validCellMine(i+1, j) + validCellMine(i+1, j-1);
-                    board[i][j].setNearbyMines(count);
+                    boardCells[i][j].setNearbyMines(count);
                 }
             }
         }
@@ -61,14 +61,27 @@ public class Board{
     //helper for getting valid cells with nearby mines
     public int validCellMine(int x, int y) {
         if (x >= 0 && x < gameRows && y >= 0 && y < gameColumns) {
-            if(board[x][y].getMine()) {
+            if(boardCells[x][y].getMine()) {
                 return 1;
             }
         }
         return 0;
     }
 
-    public Cell[][] getBoard() {return board;}
+    public String whichIcon(int x, int y) {
+        if (boardCells[x][y].getFlag()) {
+            return "flag";
+        }
+        else if (boardCells[x][y].getMine()) {
+            return "mine";
+        } else {
+            return Integer.toString(boardCells[x][y].getNearbyMines());
+        }
+    }
+    
+    public Cell[][] getBoardCells() {
+        return boardCells;
+    }
     public int getColumns() {return gameColumns;}
     public int getRows() {return gameRows;}
     public int getMines() {return gameMines;}
