@@ -10,6 +10,7 @@ public class Window extends Frame implements WindowListener {
     private final String title = "Minesweeper";
     private final int width = 600, height = 400;
     private final int tileSize = 16;
+    private final Dimension tileDimension = new Dimension(tileSize, tileSize);
 
     //private Window gameWindow;
     private JPanel outerPanel;
@@ -62,6 +63,7 @@ public class Window extends Frame implements WindowListener {
                 tiles[i][j] = new JButton("");
                 //tiles[i][j].setIcon(new ImageIcon(getClass().getResource("/media/tile.png")));
                 tiles[i][j].setName(Integer.toString(i) + "," + Integer.toString(j));
+                tiles[i][j].setPreferredSize(tileDimension);
 
                 gamePanel.add(tiles[i][j]);
             }

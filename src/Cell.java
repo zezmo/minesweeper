@@ -13,7 +13,7 @@ public class Cell extends Button{
     public Cell() {
         //make new cell with default values
         mine = false;
-        flag = true; //true to test view
+        flag = false;
         minesNearby = 0;
         cellLabel = "";
     }
