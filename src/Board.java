@@ -12,52 +12,16 @@ public class Board{
     int gameMines;
     Cell[][] board;
 
-    public Board() {
-        //this.boardRows = rows;
-        //this.boardColumns = columns;
-        //this.boardMines = mines;
-        setDifficulty("expert");
-        
+    public Board(int rows, int columns, int numMines) {
+        this.gameRows = rows;
+        this.gameColumns = columns;
+        this.gameMines = numMines;
+
         setUpBoard();
         placeMines();
         scanForMines();
     }
-
-    public void setDifficulty(String difficulty) {
-        switch(difficulty) {
-            case "easy":
-                this.gameColumns = 9;
-                this.gameRows = 9;
-                this.gameMines = 10;
-                break;
-            case "intermediate":
-                this.gameColumns = 16;
-                this.gameRows = 16;
-                this.gameMines = 40;
-                break;
-            case "expert":
-                this.gameColumns = 16;
-                this.gameRows = 30;
-                this.gameMines = 99;
-                break;
-            default:
-                System.out.println("Select difficulty");
-                break;
-        }
-    }
     
-    public int getColumns() {return  this.gameColumns;}
-    public int getRows() {return this.gameRows;}
-    public int getMines() {return this.gameMines;}
-
-    public Cell[][] getBoardCells() {
-        return this.board;
-    }
-
-    public int getBoardCellValue(int row, int column) {
-        return this.board[row][column].getCellLabel();
-    }
-
     //1. create empty board
     private void setUpBoard() {
         this.board = new Cell[gameRows][gameColumns];
@@ -76,49 +40,39 @@ public class Board{
         for (int i = 0; i < gameMines; i++) {
             randomRow = random.nextInt(gameRows);
             randomColumn = random.nextInt(gameColumns);
-
-
-            board[randomRow][randomColumn].placeMine();
-
+            board[randomRow][randomColumn].setMine(true);
         }
     }
 
     //3. set values for tiles
     private void scanForMines () {
-        /*
-        *    ex:
-        *        [*][1][0][0]
-        *        [1][2][1][1]
-        *        [0][0][0][*]
-        *
-        *    checking for cell x at [i][j]
-        *         -1  0  1
-        *       -1[ ][ ][ ]
-        *        0[ ][x][ ]
-        *        1[ ][ ][ ]
-        *
-        *    // first scanning method that came to mind might want to make this more efficient somehow
-        *    // need to skip out of bounds for the array
-        */ 
         for (int i = 0; i < gameRows; i++) {
             for (int j = 0; j < gameColumns; j++) {
                 //skip the scan if current cell has a mine
-                if( !board[i][j].cellMine ) {
+                if( !board[i][j].getMine() ) {
                     int count = 0;
-                    count = getMine(i-1, j-1) + getMine(i-1, j) + getMine(i-1, j+1) + getMine(i, j-1) + getMine(i, j+1) + getMine(i+1, j+1) + getMine(i+1, j) + getMine(i+1, j-1);
+                    count = validCellMine(i-1, j-1) + validCellMine(i-1, j) + validCellMine(i-1, j+1) + validCellMine(i, j-1) + validCellMine(i, j+1) + validCellMine(i+1, j+1) + validCellMine(i+1, j) + validCellMine(i+1, j-1);
                     board[i][j].setNearbyMines(count);
                 }
             }
         }
     }
 
-    //helper for getting nearby mines
-    public int getMine(int x, int y) {
+    //helper for getting valid cells with nearby mines
+    public int validCellMine(int x, int y) {
         if (x >= 0 && x < gameRows && y >= 0 && y < gameColumns) {
-            if(board[x][y].cellMine) {
+            if(board[x][y].getMine()) {
                 return 1;
             }
         }
         return 0;
     }
+
+    public Cell[][] getBoard() {return board;}
+    public int getColumns() {return gameColumns;}
+    public int getRows() {return gameRows;}
+    public int getMines() {return gameMines;}
+
 }
+
+
