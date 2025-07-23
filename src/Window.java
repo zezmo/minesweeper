@@ -44,6 +44,7 @@ public class Window extends Frame implements WindowListener {
 
     public Window(int row, int column, int mine) {
         setIcons();
+        setSize(width, height);
         this.rows = row;
         this.columns = column;
         this.mines = mine;
@@ -53,10 +54,14 @@ public class Window extends Frame implements WindowListener {
         JPanel gamePanel;
 
         outerPanel = new JPanel();
+
         topPanel = new JPanel();
         gamePanel = new JPanel();
         gamePanel.setLayout(new GridLayout(rows, columns, 0, 0));
         gamePanel.setSize(rows*tileSize, columns*tileSize);
+        outerPanel.add(topPanel);
+        outerPanel.add(gamePanel);
+        add(outerPanel);
 
         for (int i=0; i < rows; i++) {
             for (int j=0; j < columns; j++) {
@@ -68,14 +73,6 @@ public class Window extends Frame implements WindowListener {
                 gamePanel.add(tiles[i][j]);
             }
         }
-
-
-        outerPanel.add(topPanel);
-        outerPanel.add(gamePanel);
-
-        setSize(width, height);
-        add(outerPanel);
-
     }   
 
     public void setTileListeners(Game game) {
