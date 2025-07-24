@@ -36,11 +36,16 @@ public class Board{
     private void placeMines() {
         int randomRow, randomColumn;
         Random random = new Random();
+        int i = 0;
 
-        for (int i = 0; i < gameMines; i++) {
+        while (i < gameMines) {
             randomRow = random.nextInt(gameRows);
             randomColumn = random.nextInt(gameColumns);
-            boardCells[randomRow][randomColumn].setMine(true);
+
+            if (!boardCells[randomRow][randomColumn].getMine()) {
+                boardCells[randomRow][randomColumn].setMine(true);
+                i++;
+            }
         }
     }
 

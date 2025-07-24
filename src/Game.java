@@ -86,7 +86,6 @@ public class Game implements MouseListener, ActionListener, WindowListener{
         }
     }
 
-
     public void mouseClicked(MouseEvent e) {
         if (!gameRunning) {
             gameRunning = true;

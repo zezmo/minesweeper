@@ -139,7 +139,7 @@ public class Window extends Frame implements WindowListener {
         return question;
     }
 
-    public JButton[][] getTiles() {return tiles; }
+    public JButton[][] getTiles() {return tiles;}
 
     // window listener methods
     public void windowClosed(WindowEvent e) {
