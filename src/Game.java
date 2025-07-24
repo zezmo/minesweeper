@@ -5,9 +5,6 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowListener;
 import javax.swing.JLabel;
 import javax.swing.SwingUtilities;
-import javax.swing.border.Border;
-
-import javafx.stage.WindowEvent;
 
 public class Game implements MouseListener, ActionListener, WindowListener{
     private Board board;
@@ -73,14 +70,12 @@ public class Game implements MouseListener, ActionListener, WindowListener{
         JLabel labels[][] = window.getTiles();
         String whichIcon = board.whichIcon(row, column);
 
-        
-
         cells[row][column].setShow(true);
         labels[row][column].setBorder(window.getLoweredBorder());
 
         switch (whichIcon) {
             case "mine":
-                labels[row][column].setIcon(window.getMineIcon());
+                labels[row][column].setIcon(window.getRedMineIcon());
                 break;
             case "0":
                 labels[row][column].setIcon(window.getZeroIcon());
@@ -124,7 +119,6 @@ public class Game implements MouseListener, ActionListener, WindowListener{
         if (cells[x][y].getMine() || cells[x][y].getShow()) {
             return;
         };
-
 
         setLabelImage(x, y);        
         //setLabelText(x, y);
@@ -174,8 +168,18 @@ public class Game implements MouseListener, ActionListener, WindowListener{
 
             else if (SwingUtilities.isRightMouseButton(e)) {
                 if (!board.getBoardCells()[row][column].getShow()) {
-                    tile.setIcon(window.getFlagIcon());
-                }
+                    if(board.getBoardCells()[row][column].getFlag() == "Q") {
+                        board.getBoardCells()[row][column].setFlag("");
+                        tile.setIcon(window.getTileIcon());
+                    } else if (board.getBoardCells()[row][column].getFlag() == "F") {
+                        board.getBoardCells()[row][column].setFlag("Q");
+                        tile.setIcon(window.getQuestionIcon());
+                    }
+                    else {
+                        board.getBoardCells()[row][column].setFlag("F");
+                        tile.setIcon(window.getFlagIcon());
+                    }
+                } 
             }
 
         }

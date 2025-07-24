@@ -34,6 +34,7 @@ public class Window extends JFrame implements WindowListener {
     private int mines;
 
     private Icon mineIcon;
+    private Icon redMineIcon;
     private Icon tileIcon;
     private Icon flagIcon;
     private Icon one;
@@ -102,6 +103,7 @@ public class Window extends JFrame implements WindowListener {
 
     public void setIcons() {
         mineIcon = new ImageIcon(getClass().getResource("/media/mine.png"));
+        redMineIcon = new ImageIcon(getClass().getResource("/media/redmine.png"));
         tileIcon = new ImageIcon(getClass().getResource("/media/tile.png"));
         flagIcon = new ImageIcon(getClass().getResource("/media/flag.png"));
         one = new ImageIcon(getClass().getResource("/media/one.png"));
@@ -116,6 +118,9 @@ public class Window extends JFrame implements WindowListener {
         question = new ImageIcon(getClass().getResource("/media/question.png"));
     }
 
+    public Icon getRedMineIcon() {
+        return redMineIcon;
+    }
     public Icon getMineIcon() {
         return mineIcon;
     }

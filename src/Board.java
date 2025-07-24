@@ -74,7 +74,7 @@ public class Board{
     }
 
     public String whichIcon(int x, int y) {
-        if (boardCells[x][y].getFlag()) {
+        if (boardCells[x][y].getFlag() == "F") {
             return "flag";
         }
         else if (boardCells[x][y].getMine()) {

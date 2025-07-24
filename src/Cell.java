@@ -2,9 +2,9 @@
 
 import java.awt.Button;
 
-public class Cell extends Button{
+public class Cell{
     private boolean mine;
-    private boolean flag;
+    private String flag;
     private int minesNearby;
     private String cellLabel;
     private boolean show;
@@ -13,7 +13,7 @@ public class Cell extends Button{
     public Cell() {
         //make new cell with default values
         mine = false;
-        flag = false;
+        flag = "";
         show = false;
         minesNearby = 0;
         cellLabel = "";
@@ -43,11 +43,11 @@ public class Cell extends Button{
         this.cellLabel = l;
     }
 
-    public boolean getFlag() {
+    public String getFlag() {
         return flag;
     }
 
-    public void setFlag(boolean f) {
+    public void setFlag(String f) {
         this.flag = f;
     }
 
