@@ -23,7 +23,7 @@ public class Board{
     }
     
     //1. create empty board
-    private void setUpBoard() {
+    public void setUpBoard() {
         this.boardCells = new Cell[gameRows][gameColumns];
         for(int i = 0; i < gameRows; i++) {
             for (int j = 0; j < gameColumns; j++) {
@@ -33,7 +33,7 @@ public class Board{
     }
 
     //2. add mines to empty board
-    private void placeMines() {
+    public void placeMines() {
         int randomRow, randomColumn;
         Random random = new Random();
         int i = 0;
@@ -50,7 +50,7 @@ public class Board{
     }
 
     //3. set values for tiles
-    private void scanForMines () {
+    public void scanForMines () {
         for (int i = 0; i < gameRows; i++) {
             for (int j = 0; j < gameColumns; j++) {
                 //skip the scan if current cell has a mine

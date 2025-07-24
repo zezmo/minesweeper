@@ -1,16 +1,20 @@
 import java.awt.*;
 import java.awt.event.*;
 
+import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
-import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.border.Border;
 
 public class Window extends Frame implements WindowListener {
     private final String title = "Minesweeper";
     private final int width = 600, height = 400;
-    private final int tileSize = 16;
+    private final int tileSize = 17;
     private final Dimension tileDimension = new Dimension(tileSize, tileSize);
+    Border raisedbevel = BorderFactory.createRaisedBevelBorder();
+    Border loweredbevel = BorderFactory.createLoweredBevelBorder();
 
     //private Window gameWindow;
     private JPanel outerPanel;
@@ -20,10 +24,10 @@ public class Window extends Frame implements WindowListener {
     private MenuItem newGame;
 
     private Label timerLabel;
-    private Button newGameButton;
+    private Label newGameLabel;
     private Label bombsRemainingLabel;
 
-    private JButton[][] tiles;
+    private JLabel[][] tiles;
     private int rows;
     private int columns;
     private int mines;
@@ -48,7 +52,7 @@ public class Window extends Frame implements WindowListener {
         this.rows = row;
         this.columns = column;
         this.mines = mine;
-        tiles = new JButton[rows][columns];
+        tiles = new JLabel[rows][columns];
 
         JPanel topPanel;
         JPanel gamePanel;
@@ -65,15 +69,19 @@ public class Window extends Frame implements WindowListener {
 
         for (int i=0; i < rows; i++) {
             for (int j=0; j < columns; j++) {
-                tiles[i][j] = new JButton("");
+                tiles[i][j] = new JLabel("");
                 //tiles[i][j].setIcon(new ImageIcon(getClass().getResource("/media/tile.png")));
                 tiles[i][j].setName(Integer.toString(i) + "," + Integer.toString(j));
+                tiles[i][j].setAlignmentX(JLabel.CENTER);
+                tiles[i][j].setAlignmentY(JLabel.CENTER);
+                tiles[i][j].setBorder(raisedbevel);
+                tiles[i][j].setIcon(tileIcon);
                 tiles[i][j].setPreferredSize(tileDimension);
 
                 gamePanel.add(tiles[i][j]);
             }
         }
-    }   
+    }
 
     public void setTileListeners(Game game) {
         addWindowListener(game);
@@ -84,6 +92,10 @@ public class Window extends Frame implements WindowListener {
 
             }
         }
+    }
+
+    public Border getLoweredBorder() {
+        return loweredbevel;
     }
 
     public void setIcons() {
@@ -138,8 +150,11 @@ public class Window extends Frame implements WindowListener {
     public Icon getQuestionIcon() {
         return question;
     }
+    public Icon getFlagIcon() {
+        return flagIcon;
+    }
 
-    public JButton[][] getTiles() {return tiles;}
+    public JLabel[][] getTiles() {return tiles;}
 
     // window listener methods
     public void windowClosed(WindowEvent e) {

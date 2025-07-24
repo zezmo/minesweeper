@@ -7,6 +7,7 @@ public class Cell extends Button{
     private boolean flag;
     private int minesNearby;
     private String cellLabel;
+    private boolean show;
 
     
 
@@ -14,12 +15,19 @@ public class Cell extends Button{
         //make new cell with default values
         mine = false;
         flag = false;
+        show = false;
         minesNearby = 0;
         cellLabel = "";
     }
 
 
+    public boolean getShow() {
+        return mine;
+    }
 
+    public void setShow(boolean s) {
+        this.show = s;
+    }
     public boolean getMine() {
         return mine;
     }
