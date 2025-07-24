@@ -38,15 +38,42 @@ public class Game implements MouseListener, ActionListener, WindowListener{
         }
     }
 
+    //make new method for revealing a cell instead.
+    public void revealCell(int row, int column) {
+
+    }
+
+    /* //was trying to see if this might be faster
+    public void setLabelText(int row, int column) {
+        Cell cells[][] = board.getBoardCells();
+        Cell currentCell = cells[row][column];
+        if (currentCell.getShow()) {
+            return;
+        }
+        JLabel labels[][] = window.getTiles();
+        JLabel currentTile = labels[row][column];
+        
+        currentCell.setShow(true);
+        currentTile.setBorder(window.getLoweredBorder());
+
+        if (currentCell.getMine()) {
+            currentTile.setIcon(window.getMineIcon());
+            return;
+        } else {
+            currentTile.setText(Integer.toString(currentCell.getNearbyMines()));
+        }
+    }
+        */
 
     public void setLabelImage(int row, int column) {
         Cell cells[][] = board.getBoardCells();
-        JLabel labels[][] = window.getTiles();
-        String whichIcon = board.whichIcon(row, column);
-
         if (cells[row][column].getShow()) {
             return;
         }
+        JLabel labels[][] = window.getTiles();
+        String whichIcon = board.whichIcon(row, column);
+
+        
 
         cells[row][column].setShow(true);
         labels[row][column].setBorder(window.getLoweredBorder());
@@ -86,15 +113,11 @@ public class Game implements MouseListener, ActionListener, WindowListener{
                 break;
         }
 
-    }
+    } 
 
     //recursive funtion to clear out blank tiles when a zero is found
     public void clearAdjacentZeros(int x, int y) {
-        
-        JLabel tiles[][] = window.getTiles();
         Cell cells[][] = board.getBoardCells();
-        Border loweredbevel = window.getLoweredBorder();
-        
         if (x < 0 || y < 0 || x >= board.getRows() || y >= board.getColumns()) {
             return;
         }
@@ -102,7 +125,9 @@ public class Game implements MouseListener, ActionListener, WindowListener{
             return;
         };
 
+
         setLabelImage(x, y);        
+        //setLabelText(x, y);
 
         if(cells[x][y].getNearbyMines() == 0) {
             for (int i = -1; i < 2; i++) {
@@ -127,26 +152,30 @@ public class Game implements MouseListener, ActionListener, WindowListener{
 
         if (gameRunning) {
             JLabel tile = (JLabel)e.getSource();
-
             String[] coords = tile.getName().split(",");
-
             int row = Integer.parseInt(coords[0]);
             int column = Integer.parseInt(coords[1]);
-
             boolean checkIfMine = board.getBoardCells()[row][column].getMine();
             int nearbyMines = board.getBoardCells()[row][column].getNearbyMines();
             
-
             if (SwingUtilities.isLeftMouseButton(e)) {
-                if(nearbyMines == 0) {
+                if(checkIfMine) {
+                    setLabelImage(row, column);
+                    //setLabelText(row, column);
+                } else if(nearbyMines == 0) {
                     clearAdjacentZeros(row, column);
+                } 
+                else {
+                    setLabelImage(row, column);
+                    //setLabelText(row, column);
+
                 }
-                tile.setBorder(window.getLoweredBorder());
-                setLabelImage(row, column);
             }
 
             else if (SwingUtilities.isRightMouseButton(e)) {
-                tile.setIcon(window.getFlagIcon());
+                if (!board.getBoardCells()[row][column].getShow()) {
+                    tile.setIcon(window.getFlagIcon());
+                }
             }
 
         }

@@ -4,11 +4,12 @@ import java.awt.event.*;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 
-public class Window extends Frame implements WindowListener {
+public class Window extends JFrame implements WindowListener {
     private final String title = "Minesweeper";
     private final int width = 600, height = 400;
     private final int tileSize = 17;
@@ -47,6 +48,7 @@ public class Window extends Frame implements WindowListener {
     private Icon question;
 
     public Window(int row, int column, int mine) {
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setIcons();
         setSize(width, height);
         this.rows = row;

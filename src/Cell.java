@@ -9,7 +9,6 @@ public class Cell extends Button{
     private String cellLabel;
     private boolean show;
 
-    
 
     public Cell() {
         //make new cell with default values
@@ -22,7 +21,7 @@ public class Cell extends Button{
 
 
     public boolean getShow() {
-        return mine;
+        return show;
     }
 
     public void setShow(boolean s) {

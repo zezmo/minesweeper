@@ -79,6 +79,7 @@ public class Board{
         }
         else if (boardCells[x][y].getMine()) {
             return "mine";
+            
         } else {
             return Integer.toString(boardCells[x][y].getNearbyMines());
         }
