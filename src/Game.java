@@ -35,33 +35,6 @@ public class Game implements MouseListener, ActionListener, WindowListener{
         }
     }
 
-    //make new method for revealing a cell instead.
-    public void revealCell(int row, int column) {
-
-    }
-
-    /* //was trying to see if this might be faster
-    public void setLabelText(int row, int column) {
-        Cell cells[][] = board.getBoardCells();
-        Cell currentCell = cells[row][column];
-        if (currentCell.getShow()) {
-            return;
-        }
-        JLabel labels[][] = window.getTiles();
-        JLabel currentTile = labels[row][column];
-        
-        currentCell.setShow(true);
-        currentTile.setBorder(window.getLoweredBorder());
-
-        if (currentCell.getMine()) {
-            currentTile.setIcon(window.getMineIcon());
-            return;
-        } else {
-            currentTile.setText(Integer.toString(currentCell.getNearbyMines()));
-        }
-    }
-        */
-
     public void setLabelImage(int row, int column) {
         Cell cells[][] = board.getBoardCells();
         if (cells[row][column].getShow()) {

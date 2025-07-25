@@ -6,8 +6,12 @@ import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
+import javax.swing.plaf.MenuBarUI;
 
 public class Window extends JFrame implements WindowListener {
     private final String title = "Minesweeper";
@@ -20,13 +24,14 @@ public class Window extends JFrame implements WindowListener {
     //private Window gameWindow;
     private JPanel outerPanel;
 
-    private MenuBar menuBar;
-    private Menu gameMenu;
-    private MenuItem newGame;
+    private JMenuBar menuBar;
+    private JMenu gameMenu;
+    private JMenuItem newGame;
+    private JMenuItem difficulty;
 
-    private Label timerLabel;
-    private Label newGameLabel;
-    private Label bombsRemainingLabel;
+    private JLabel timerLabel;
+    private JLabel newGameLabel;
+    private JLabel bombsRemainingLabel;
 
     private JLabel[][] tiles;
     private int rows;
@@ -57,23 +62,41 @@ public class Window extends JFrame implements WindowListener {
         this.mines = mine;
         tiles = new JLabel[rows][columns];
 
-        JPanel topPanel;
+        menuBar = new JMenuBar();
+        gameMenu = new JMenu("Game");
+        newGame = new JMenuItem("New Game");
+        gameMenu.add(newGame);
+        menuBar.add(gameMenu);
+        setJMenuBar(menuBar);
+
+        JPanel mainPanel;
         JPanel gamePanel;
+        JPanel headerPanel;
+
+        timerLabel = new JLabel("timer");
+        newGameLabel = new JLabel("new game");
+        bombsRemainingLabel = new JLabel("mines left");
 
         outerPanel = new JPanel();
-
-        topPanel = new JPanel();
+        outerPanel.setLayout(new BorderLayout());
+        headerPanel = new JPanel();
+        headerPanel.add(timerLabel); 
+        headerPanel.add(newGameLabel);
+        headerPanel.add(bombsRemainingLabel);
+        
+        mainPanel = new JPanel();
         gamePanel = new JPanel();
         gamePanel.setLayout(new GridLayout(rows, columns, 0, 0));
         gamePanel.setSize(rows*tileSize, columns*tileSize);
-        outerPanel.add(topPanel);
-        outerPanel.add(gamePanel);
+        outerPanel.add(mainPanel, BorderLayout.CENTER);
+        mainPanel.add(gamePanel);
         add(outerPanel);
+        outerPanel.add(headerPanel, BorderLayout.NORTH);
+        //add(topPanel);
 
         for (int i=0; i < rows; i++) {
             for (int j=0; j < columns; j++) {
                 tiles[i][j] = new JLabel("");
-                //tiles[i][j].setIcon(new ImageIcon(getClass().getResource("/media/tile.png")));
                 tiles[i][j].setName(Integer.toString(i) + "," + Integer.toString(j));
                 tiles[i][j].setAlignmentX(JLabel.CENTER);
                 tiles[i][j].setAlignmentY(JLabel.CENTER);
@@ -84,6 +107,11 @@ public class Window extends JFrame implements WindowListener {
                 gamePanel.add(tiles[i][j]);
             }
         }
+
+        
+
+        
+
     }
 
     public void setTileListeners(Game game) {
