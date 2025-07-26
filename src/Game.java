@@ -4,6 +4,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowListener;
 import javax.swing.JLabel;
+import javax.swing.JMenuItem;
 import javax.swing.SwingUtilities;
 
 public class Game implements MouseListener, ActionListener, WindowListener{
@@ -15,8 +16,30 @@ public class Game implements MouseListener, ActionListener, WindowListener{
         newBoardSetUp(difficulty);
         this.window = new Window(board.getRows(), board.getColumns(), board.getMines());
         this.window.setTileListeners(this);
+        this.window.setWindowAndMenuListeners(this);
         this.gameRunning = false;
         window.setVisible(true);
+    }
+
+    public void newGame(String difficulty) {
+        this.gameRunning = false;
+        newBoardSetUp(difficulty);
+        switch(difficulty) {
+            case "easy": 
+                this.window.redrawTiles(9, 9);
+                this.window.setTileListeners(this);
+                break;
+            case "intermediate": 
+                this.window.redrawTiles(16, 16);
+                this.window.setTileListeners(this);
+                break;
+            case "expert": 
+                this.window.redrawTiles(16, 32);
+                this.window.setTileListeners(this);
+                break;
+            default: 
+                break;
+        }
     }
 
     public void newBoardSetUp(String d) {
@@ -157,7 +180,24 @@ public class Game implements MouseListener, ActionListener, WindowListener{
 
         }
     }
-
+    
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        JMenuItem menuItem = (JMenuItem) e.getSource();
+        switch (menuItem.getName()) {
+            case "easy":
+                newGame("easy");
+                break;
+            case "intermediate":
+                newGame("intermediate");
+                break;
+            case "expert":
+                newGame("expert");
+                break;
+            default:
+                break;
+        }
+    }
 
     @Override
     public void mousePressed(MouseEvent e) {
@@ -192,7 +232,5 @@ public class Game implements MouseListener, ActionListener, WindowListener{
     @Override
     public void windowDeactivated(java.awt.event.WindowEvent e) {
     }
-    @Override
-    public void actionPerformed(ActionEvent e) {
-    }
+    
 }

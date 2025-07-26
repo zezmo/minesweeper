@@ -1,7 +1,5 @@
 //custom object to populate in game board
 
-import java.awt.Button;
-
 public class Cell{
     private boolean mine;
     private String flag;

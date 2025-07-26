@@ -11,7 +11,6 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
-import javax.swing.plaf.MenuBarUI;
 
 public class Window extends JFrame implements WindowListener {
     private final String title = "Minesweeper";
@@ -23,11 +22,16 @@ public class Window extends JFrame implements WindowListener {
 
     //private Window gameWindow;
     private JPanel outerPanel;
+    private JPanel gamePanel;
+    private JPanel mainPanel;
+    private JPanel headerPanel;
 
     private JMenuBar menuBar;
     private JMenu gameMenu;
-    private JMenuItem newGame;
-    private JMenuItem difficulty;
+    private JMenu newGame;
+    private JMenuItem easy;
+    private JMenuItem intermediate;
+    private JMenuItem expert;
 
     private JLabel timerLabel;
     private JLabel newGameLabel;
@@ -36,7 +40,6 @@ public class Window extends JFrame implements WindowListener {
     private JLabel[][] tiles;
     private int rows;
     private int columns;
-    private int mines;
 
     private Icon mineIcon;
     private Icon redMineIcon;
@@ -57,21 +60,27 @@ public class Window extends JFrame implements WindowListener {
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setIcons();
         setSize(width, height);
+        setTitle(title);
+
         this.rows = row;
         this.columns = column;
-        this.mines = mine;
-        tiles = new JLabel[rows][columns];
 
         menuBar = new JMenuBar();
         gameMenu = new JMenu("Game");
-        newGame = new JMenuItem("New Game");
+        newGame = new JMenu("New Game");
+        easy = new JMenuItem("easy");
+        easy.setName("easy");
+        intermediate = new JMenuItem("intermediate");
+        intermediate.setName("intermediate");
+        expert = new JMenuItem("expert");
+        expert.setName("expert");
+
+        newGame.add(easy);
+        newGame.add(intermediate);
+        newGame.add(expert);
         gameMenu.add(newGame);
         menuBar.add(gameMenu);
         setJMenuBar(menuBar);
-
-        JPanel mainPanel;
-        JPanel gamePanel;
-        JPanel headerPanel;
 
         timerLabel = new JLabel("timer");
         newGameLabel = new JLabel("new game");
@@ -83,16 +92,20 @@ public class Window extends JFrame implements WindowListener {
         headerPanel.add(timerLabel); 
         headerPanel.add(newGameLabel);
         headerPanel.add(bombsRemainingLabel);
-        
         mainPanel = new JPanel();
         gamePanel = new JPanel();
         gamePanel.setLayout(new GridLayout(rows, columns, 0, 0));
         gamePanel.setSize(rows*tileSize, columns*tileSize);
         outerPanel.add(mainPanel, BorderLayout.CENTER);
         mainPanel.add(gamePanel);
-        add(outerPanel);
         outerPanel.add(headerPanel, BorderLayout.NORTH);
-        //add(topPanel);
+        add(outerPanel);
+
+        // ==============================================================
+        // game tiles
+        //===============================================================
+        
+        tiles = new JLabel[rows][columns];
 
         for (int i=0; i < rows; i++) {
             for (int j=0; j < columns; j++) {
@@ -107,22 +120,61 @@ public class Window extends JFrame implements WindowListener {
                 gamePanel.add(tiles[i][j]);
             }
         }
-
-        
-
-        
-
     }
 
-    public void setTileListeners(Game game) {
-        addWindowListener(game);
+    public void redrawTiles(int r, int c) {
+        gamePanel.removeAll();
+        rows = r;
+        columns = c;
+
+        System.out.println(rows);
+        System.out.println(columns);
+
+        
+        gamePanel.setSize(rows*tileSize, columns*tileSize);
+        gamePanel.setLayout(new GridLayout(rows, columns));
+        tiles = new JLabel[rows][columns];
 
         for (int i=0; i < rows; i++) {
             for (int j=0; j < columns; j++) {
-                tiles[i][j].addMouseListener(game);
+
+                tiles[i][j] = new JLabel("");
+                tiles[i][j].setName(Integer.toString(i) + "," + Integer.toString(j));
+                tiles[i][j].setAlignmentX(JLabel.CENTER);
+                tiles[i][j].setAlignmentY(JLabel.CENTER);
+                tiles[i][j].setBorder(raisedbevel);
+                tiles[i][j].setIcon(tileIcon);
+                tiles[i][j].setPreferredSize(tileDimension);
+                gamePanel.add(tiles[i][j]);
+            }
+        }
+        gamePanel.revalidate();
+        gamePanel.repaint();
+    }
+
+    public void coverTiles() {
+        for (int i=0; i < rows; i++) {
+            for (int j=0; j < columns; j++) {
+                tiles[i][j].setBorder(raisedbevel);
+                tiles[i][j].setIcon(tileIcon);
 
             }
         }
+    }
+
+    public void setTileListeners(Game game) {
+        for (int i=0; i < rows; i++) {
+            for (int j=0; j < columns; j++) {
+                tiles[i][j].addMouseListener(game);
+            }
+        }
+    }
+
+    public void setWindowAndMenuListeners(Game game) {
+        addWindowListener(game);
+        easy.addActionListener(game);
+        intermediate.addActionListener(game);
+        expert.addActionListener(game);
     }
 
     public Border getLoweredBorder() {
