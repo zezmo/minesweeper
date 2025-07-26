@@ -241,6 +241,9 @@ public class Window extends JFrame implements WindowListener {
         return flagIcon;
     }
 
+    public JPanel getGamePanel() {
+        return gamePanel;
+    }
     public JLabel[][] getTiles() {return tiles;}
 
     // window listener methods

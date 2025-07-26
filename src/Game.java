@@ -5,6 +5,7 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowListener;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
+import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 public class Game implements MouseListener, ActionListener, WindowListener{
@@ -56,6 +57,10 @@ public class Game implements MouseListener, ActionListener, WindowListener{
             default: 
                 break;
         }
+    }
+
+    public void checkGame() {
+
     }
 
     public void setLabelImage(int row, int column) {
@@ -153,7 +158,13 @@ public class Game implements MouseListener, ActionListener, WindowListener{
                     setLabelImage(row, column);
                     //setLabelText(row, column);
                 } else if(nearbyMines == 0) {
+                    JPanel panel = window.getGamePanel();
+                    panel.setIgnoreRepaint(true);
                     clearAdjacentZeros(row, column);
+                    panel.setIgnoreRepaint(false);
+                    panel.revalidate();
+                    panel.repaint();
+
                 } 
                 else {
                     setLabelImage(row, column);
