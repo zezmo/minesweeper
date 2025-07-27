@@ -18,6 +18,7 @@ public class Game implements MouseListener, ActionListener, WindowListener{
         this.window = new Window(board.getRows(), board.getColumns(), board.getMines());
         this.window.setTileListeners(this);
         this.window.setWindowAndMenuListeners(this);
+        this.window.setMinesValue(board.getMines());
         this.gameRunning = false;
         window.setVisible(true);
     }
@@ -27,16 +28,19 @@ public class Game implements MouseListener, ActionListener, WindowListener{
         newBoardSetUp(difficulty);
         switch(difficulty) {
             case "easy": 
-                this.window.redrawTiles(9, 9);
+                this.window.redrawTiles(9, 9, 10);
                 this.window.setTileListeners(this);
+                this.window.setMinesValue(10);
                 break;
             case "intermediate": 
-                this.window.redrawTiles(16, 16);
+                this.window.redrawTiles(16, 16, 40);
                 this.window.setTileListeners(this);
+                this.window.setMinesValue(40);
                 break;
             case "expert": 
-                this.window.redrawTiles(16, 32);
+                this.window.redrawTiles(16, 32, 99);
                 this.window.setTileListeners(this);
+                this.window.setMinesValue(99);
                 break;
             default: 
                 break;
@@ -141,6 +145,7 @@ public class Game implements MouseListener, ActionListener, WindowListener{
     @Override
     public void mouseClicked(MouseEvent e) {
         if (!gameRunning) {
+            window.startTimer();
             gameRunning = true;
             System.out.println("game is running!");
         }
@@ -181,10 +186,12 @@ public class Game implements MouseListener, ActionListener, WindowListener{
                     } else if (board.getBoardCells()[row][column].getFlag() == "F") {
                         board.getBoardCells()[row][column].setFlag("Q");
                         tile.setIcon(window.getQuestionIcon());
+                        window.plusMine();
                     }
                     else {
                         board.getBoardCells()[row][column].setFlag("F");
                         tile.setIcon(window.getFlagIcon());
+                        window.minusMine();
                     }
                 } 
             }

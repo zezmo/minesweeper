@@ -17,6 +17,8 @@ public class Window extends JFrame implements WindowListener {
     private final int width = 600, height = 400;
     private final int tileSize = 17;
     private final Dimension tileDimension = new Dimension(tileSize, tileSize);
+    private SegmentDisplay minesSegmentDisplay[];
+    private SegmentDisplay timerSegmentDisplay[];
     Border raisedbevel = BorderFactory.createRaisedBevelBorder();
     Border loweredbevel = BorderFactory.createLoweredBevelBorder();
 
@@ -33,9 +35,13 @@ public class Window extends JFrame implements WindowListener {
     private JMenuItem intermediate;
     private JMenuItem expert;
 
-    private JLabel timerLabel;
+    private Thread timer;
+    private boolean timerRunning;
+    private int gameTime;
+
     private JLabel newGameLabel;
-    private JLabel bombsRemainingLabel;
+    
+    private int minesRemaining;
 
     private JLabel[][] tiles;
     private int rows;
@@ -64,6 +70,7 @@ public class Window extends JFrame implements WindowListener {
 
         this.rows = row;
         this.columns = column;
+        minesRemaining = mine;
 
         menuBar = new JMenuBar();
         gameMenu = new JMenu("Game");
@@ -82,16 +89,33 @@ public class Window extends JFrame implements WindowListener {
         menuBar.add(gameMenu);
         setJMenuBar(menuBar);
 
-        timerLabel = new JLabel("timer");
-        newGameLabel = new JLabel("new game");
-        bombsRemainingLabel = new JLabel("mines left");
+
 
         outerPanel = new JPanel();
         outerPanel.setLayout(new BorderLayout());
         headerPanel = new JPanel();
-        headerPanel.add(timerLabel); 
+
+        //==========================================
+        // header with mines left and timer
+        //==========================================
+        newGameLabel = new JLabel("new game");
+
+        timerSegmentDisplay = new SegmentDisplay[3];
+        minesSegmentDisplay = new SegmentDisplay[2];
+        
+        for(int i=0; i<3; i++) {
+            timerSegmentDisplay[i] = new SegmentDisplay();
+            headerPanel.add(timerSegmentDisplay[i]);
+
+        }
         headerPanel.add(newGameLabel);
-        headerPanel.add(bombsRemainingLabel);
+
+        for(int i=0; i<2; i++) {
+            minesSegmentDisplay[i] = new SegmentDisplay();
+            headerPanel.add(minesSegmentDisplay[i]);
+        }
+        gameTime = 0;
+        
         mainPanel = new JPanel();
         gamePanel = new JPanel();
         gamePanel.setLayout(new GridLayout(rows, columns, 0, 0));
@@ -122,10 +146,58 @@ public class Window extends JFrame implements WindowListener {
         }
     }
 
-    public void redrawTiles(int r, int c) {
+    public void startTimer() {
+        timerRunning = true;
+
+        timer = new Thread() {
+            @Override
+            public void run() {
+                while(timerRunning) {
+                    gameTime++;
+                    setTimerValue(gameTime);
+                    try {
+                        sleep(1000); // one second
+                    }
+                    catch(InterruptedException ex){}
+                }
+            }
+        };
+
+        timer.start();
+    }
+
+    public void setTimerValue(int t) {
+        String s = String.format("%03d", t);
+        for (int i=0; i<3; i++) {
+            timerSegmentDisplay[i].writeNumber(Character.getNumericValue(s.charAt(i)));
+            timerSegmentDisplay[i].repaint();
+        }
+    }
+
+    public void setMinesValue(int m) {
+        String s = String.format("%02d", m);
+        for (int i=0; i<2; i++) {
+            minesSegmentDisplay[i].writeNumber(Character.getNumericValue(s.charAt(i)));
+            minesSegmentDisplay[i].repaint();
+        }
+    }
+
+
+    public void minusMine() {
+        minesRemaining--;
+        System.out.print(minesRemaining);
+        setMinesValue(minesRemaining);
+    }
+    public void plusMine() {
+        minesRemaining++;
+        setMinesValue(minesRemaining);
+    }
+
+    public void redrawTiles(int r, int c, int m) {
         gamePanel.removeAll();
         rows = r;
         columns = c;
+        minesRemaining = m;
 
         System.out.println(rows);
         System.out.println(columns);
@@ -152,16 +224,6 @@ public class Window extends JFrame implements WindowListener {
         gamePanel.repaint();
     }
 
-    public void coverTiles() {
-        for (int i=0; i < rows; i++) {
-            for (int j=0; j < columns; j++) {
-                tiles[i][j].setBorder(raisedbevel);
-                tiles[i][j].setIcon(tileIcon);
-
-            }
-        }
-    }
-
     public void setTileListeners(Game game) {
         for (int i=0; i < rows; i++) {
             for (int j=0; j < columns; j++) {
@@ -177,10 +239,12 @@ public class Window extends JFrame implements WindowListener {
         expert.addActionListener(game);
     }
 
+    //==================================
+    // set and get icons
+    //==================================
     public Border getLoweredBorder() {
         return loweredbevel;
     }
-
     public void setIcons() {
         mineIcon = new ImageIcon(getClass().getResource("/media/mine.png"));
         redMineIcon = new ImageIcon(getClass().getResource("/media/redmine.png"));
@@ -197,7 +261,6 @@ public class Window extends JFrame implements WindowListener {
         zero = new ImageIcon(getClass().getResource("/media/zero.png"));
         question = new ImageIcon(getClass().getResource("/media/question.png"));
     }
-
     public Icon getRedMineIcon() {
         return redMineIcon;
     }
@@ -240,7 +303,6 @@ public class Window extends JFrame implements WindowListener {
     public Icon getFlagIcon() {
         return flagIcon;
     }
-
     public JPanel getGamePanel() {
         return gamePanel;
     }
