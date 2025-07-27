@@ -12,9 +12,11 @@ public class Game implements MouseListener, ActionListener, WindowListener{
     private Board board;
     private Window window;
     private boolean gameRunning;
+    private boolean gameWon;
 
     public Game (String difficulty) {
         newBoardSetUp(difficulty);
+        gameWon = false;
         this.window = new Window(board.getRows(), board.getColumns(), board.getMines());
         this.window.setTileListeners(this);
         this.window.setWindowAndMenuListeners(this);
@@ -26,6 +28,7 @@ public class Game implements MouseListener, ActionListener, WindowListener{
     public void newGame(String difficulty) {
         this.gameRunning = false;
         newBoardSetUp(difficulty);
+        this.window.resetTimer();
         switch(difficulty) {
             case "easy": 
                 this.window.redrawTiles(9, 9, 10);
@@ -80,7 +83,7 @@ public class Game implements MouseListener, ActionListener, WindowListener{
 
         switch (whichIcon) {
             case "mine":
-                labels[row][column].setIcon(window.getRedMineIcon());
+                labels[row][column].setIcon(window.getMineIcon());
                 break;
             case "0":
                 labels[row][column].setIcon(window.getZeroIcon());
@@ -142,6 +145,23 @@ public class Game implements MouseListener, ActionListener, WindowListener{
         }
     }
 
+    public void showAllMines(int x, int y) {
+        Cell cells[][] = board.getBoardCells();
+        JLabel tiles[][] = window.getTiles();
+
+        for (int i=0; i < board.getRows(); i++) {
+            for (int j=0; j < board.getRows(); j++) {
+                if(i==x && j==y && !gameWon) { 
+                    continue;
+                }
+                if(cells[i][j].getMine()) {
+                setLabelImage(i, j);
+
+                }
+            }
+        }
+    }
+
     @Override
     public void mouseClicked(MouseEvent e) {
         if (!gameRunning) {
@@ -160,8 +180,15 @@ public class Game implements MouseListener, ActionListener, WindowListener{
             
             if (SwingUtilities.isLeftMouseButton(e)) {
                 if(checkIfMine) {
-                    setLabelImage(row, column);
-                    //setLabelText(row, column);
+                    JPanel panel = window.getGamePanel();
+                    panel.setIgnoreRepaint(true);
+                    window.getTiles()[row][column].setIcon(window.getRedMineIcon());
+                    window.stopTimer();
+                    showAllMines(row, column);
+                    panel.setIgnoreRepaint(false);
+                    panel.revalidate();
+                    panel.repaint();
+
                 } else if(nearbyMines == 0) {
                     JPanel panel = window.getGamePanel();
                     panel.setIgnoreRepaint(true);
@@ -173,7 +200,6 @@ public class Game implements MouseListener, ActionListener, WindowListener{
                 } 
                 else {
                     setLabelImage(row, column);
-                    //setLabelText(row, column);
 
                 }
             }

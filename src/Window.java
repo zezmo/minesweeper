@@ -4,6 +4,7 @@ import java.awt.event.*;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -14,19 +15,24 @@ import javax.swing.border.Border;
 
 public class Window extends JFrame implements WindowListener {
     private final String title = "Minesweeper";
-    private final int width = 600, height = 400;
-    private final int tileSize = 17;
+    private int width, height;
+    private final int tileSize = 23;
     private final Dimension tileDimension = new Dimension(tileSize, tileSize);
-    private SegmentDisplay minesSegmentDisplay[];
-    private SegmentDisplay timerSegmentDisplay[];
+    private final Dimension buttonDimension = new Dimension(42,42);
+    private final Dimension segmentsDimension = new Dimension(97, 55);
+    private SegmentDisplay minesSegment[];
+    private SegmentDisplay timerSegment[];
     Border raisedbevel = BorderFactory.createRaisedBevelBorder();
     Border loweredbevel = BorderFactory.createLoweredBevelBorder();
 
     //private Window gameWindow;
     private JPanel outerPanel;
-    private JPanel gamePanel;
+    private JPanel gamePanel; //game board
     private JPanel mainPanel;
     private JPanel headerPanel;
+    private JPanel buttonPanel;
+    private JPanel timerDisplay;
+    private JPanel minesDisplay;
 
     private JMenuBar menuBar;
     private JMenu gameMenu;
@@ -39,7 +45,8 @@ public class Window extends JFrame implements WindowListener {
     private boolean timerRunning;
     private int gameTime;
 
-    private JLabel newGameLabel;
+    private JButton newGameButton;
+    //private JLabel newGameLabel;
     
     private int minesRemaining;
 
@@ -61,8 +68,10 @@ public class Window extends JFrame implements WindowListener {
     private Icon eight;
     private Icon zero;
     private Icon question;
+    private Icon newGameIcon;
 
     public Window(int row, int column, int mine) {
+        setResizable(false);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setIcons();
         setSize(width, height);
@@ -71,6 +80,9 @@ public class Window extends JFrame implements WindowListener {
         this.rows = row;
         this.columns = column;
         minesRemaining = mine;
+
+        width = columns*tileSize +20;
+        height = rows*tileSize + 80;
 
         menuBar = new JMenuBar();
         gameMenu = new JMenu("Game");
@@ -93,34 +105,76 @@ public class Window extends JFrame implements WindowListener {
 
         outerPanel = new JPanel();
         outerPanel.setLayout(new BorderLayout());
-        headerPanel = new JPanel();
 
         //==========================================
         // header with mines left and timer
         //==========================================
-        newGameLabel = new JLabel("new game");
+        JPanel leftWrapper = new JPanel(new GridBagLayout());
+        JPanel rightWrapper = new JPanel(new GridBagLayout());
+        JPanel centerWrapper = new JPanel(new GridBagLayout());
 
-        timerSegmentDisplay = new SegmentDisplay[3];
-        minesSegmentDisplay = new SegmentDisplay[2];
+        headerPanel = new JPanel();
+        headerPanel.setSize(900, 63);
+        headerPanel.setLayout(new BorderLayout());
+        headerPanel.setPreferredSize(new Dimension(400, 80));
+        headerPanel.setBorder(loweredbevel);
+        headerPanel.setBackground(Color.LIGHT_GRAY);
+        headerPanel.setOpaque(true);
+        
+        buttonPanel = new JPanel();
+        timerDisplay = new JPanel();
+        timerDisplay.setBorder(loweredbevel);
+        timerDisplay.setLayout(new FlowLayout(0, 0, 0));
+        timerDisplay.setPreferredSize(segmentsDimension);
+
+        minesDisplay = new JPanel();
+        minesDisplay.setLayout(new FlowLayout(0, 0, 0));
+        minesDisplay.setBorder(loweredbevel);
+        minesDisplay.setPreferredSize(segmentsDimension);
+
+        newGameButton = new JButton("");
+        newGameButton.setIcon(newGameIcon);
+        newGameButton.setPreferredSize(buttonDimension);
+        newGameButton.setBorder(raisedbevel);
+        buttonPanel.add(newGameButton);
+
+        leftWrapper.add(minesDisplay);
+        leftWrapper.setOpaque(false);
+        rightWrapper.add(timerDisplay);
+        rightWrapper.setOpaque(false);
+        centerWrapper.add(buttonPanel);
+        centerWrapper.setOpaque(false);
+
+        headerPanel.add(leftWrapper, BorderLayout.WEST);
+        headerPanel.add(centerWrapper, BorderLayout.CENTER);
+        headerPanel.add(rightWrapper, BorderLayout.EAST);
+
+        timerSegment = new SegmentDisplay[3];
+        minesSegment = new SegmentDisplay[3];
         
         for(int i=0; i<3; i++) {
-            timerSegmentDisplay[i] = new SegmentDisplay();
-            headerPanel.add(timerSegmentDisplay[i]);
+            timerSegment[i] = new SegmentDisplay();
+            timerDisplay.add(timerSegment[i]);
 
         }
-        headerPanel.add(newGameLabel);
 
-        for(int i=0; i<2; i++) {
-            minesSegmentDisplay[i] = new SegmentDisplay();
-            headerPanel.add(minesSegmentDisplay[i]);
+        for(int i=0; i<3; i++) {
+            minesSegment[i] = new SegmentDisplay();
+            minesDisplay.add(minesSegment[i]);
         }
         gameTime = 0;
         
         mainPanel = new JPanel();
+        mainPanel.setBorder(loweredbevel);
+        mainPanel.setBackground(Color.GRAY);
+        mainPanel.setOpaque(true);
+
         gamePanel = new JPanel();
         gamePanel.setLayout(new GridLayout(rows, columns, 0, 0));
+        gamePanel.setBorder(loweredbevel);
         gamePanel.setSize(rows*tileSize, columns*tileSize);
         outerPanel.add(mainPanel, BorderLayout.CENTER);
+        outerPanel.setBorder(raisedbevel);
         mainPanel.add(gamePanel);
         outerPanel.add(headerPanel, BorderLayout.NORTH);
         add(outerPanel);
@@ -144,6 +198,8 @@ public class Window extends JFrame implements WindowListener {
                 gamePanel.add(tiles[i][j]);
             }
         }
+
+        pack();
     }
 
     public void startTimer() {
@@ -166,19 +222,35 @@ public class Window extends JFrame implements WindowListener {
         timer.start();
     }
 
+    public void stopTimer() {
+        timerRunning = false;
+
+        try {
+            if(timer != null) {
+                timer.join();
+            } 
+        } catch (InterruptedException ex) {}
+
+    }
+
+    public void resetTimer() {
+        gameTime = 0;
+        setTimerValue(gameTime);
+    }
+
     public void setTimerValue(int t) {
         String s = String.format("%03d", t);
         for (int i=0; i<3; i++) {
-            timerSegmentDisplay[i].writeNumber(Character.getNumericValue(s.charAt(i)));
-            timerSegmentDisplay[i].repaint();
+            timerSegment[i].writeNumber(Character.getNumericValue(s.charAt(i)));
+            timerSegment[i].repaint();
         }
     }
 
     public void setMinesValue(int m) {
-        String s = String.format("%02d", m);
-        for (int i=0; i<2; i++) {
-            minesSegmentDisplay[i].writeNumber(Character.getNumericValue(s.charAt(i)));
-            minesSegmentDisplay[i].repaint();
+        String s = String.format("%03d", m);
+        for (int i=0; i<3; i++) {
+            minesSegment[i].writeNumber(Character.getNumericValue(s.charAt(i)));
+            minesSegment[i].repaint();
         }
     }
 
@@ -222,6 +294,7 @@ public class Window extends JFrame implements WindowListener {
         }
         gamePanel.revalidate();
         gamePanel.repaint();
+        pack();
     }
 
     public void setTileListeners(Game game) {
@@ -242,24 +315,34 @@ public class Window extends JFrame implements WindowListener {
     //==================================
     // set and get icons
     //==================================
+    private ImageIcon resizeIcon(ImageIcon icon, int w, int h) {
+        Image img = icon.getImage();
+        Image scaled = img.getScaledInstance(w, h, Image.SCALE_SMOOTH);
+        return new ImageIcon(scaled);
+    }
+
     public Border getLoweredBorder() {
         return loweredbevel;
     }
     public void setIcons() {
-        mineIcon = new ImageIcon(getClass().getResource("/media/mine.png"));
-        redMineIcon = new ImageIcon(getClass().getResource("/media/redmine.png"));
-        tileIcon = new ImageIcon(getClass().getResource("/media/tile.png"));
-        flagIcon = new ImageIcon(getClass().getResource("/media/flag.png"));
-        one = new ImageIcon(getClass().getResource("/media/one.png"));
-        two = new ImageIcon(getClass().getResource("/media/two.png"));
-        three = new ImageIcon(getClass().getResource("/media/three.png"));
-        four = new ImageIcon(getClass().getResource("/media/four.png"));
-        five = new ImageIcon(getClass().getResource("/media/five.png"));
-        six = new ImageIcon(getClass().getResource("/media/six.png"));
-        seven = new ImageIcon(getClass().getResource("/media/seven.png"));
-        eight = new ImageIcon(getClass().getResource("/media/eight.png"));
-        zero = new ImageIcon(getClass().getResource("/media/zero.png"));
-        question = new ImageIcon(getClass().getResource("/media/question.png"));
+        mineIcon = resizeIcon( new ImageIcon(getClass().getResource("/media/mine.png")), tileSize, tileSize);
+        redMineIcon = resizeIcon(new ImageIcon(getClass().getResource("/media/redmine.png")), tileSize, tileSize);
+        tileIcon = resizeIcon(new ImageIcon(getClass().getResource("/media/tile.png")), tileSize, tileSize);
+        flagIcon = resizeIcon(new ImageIcon(getClass().getResource("/media/flag.png")), tileSize, tileSize);
+        one = resizeIcon(new ImageIcon(getClass().getResource("/media/one.png")), tileSize, tileSize);
+        two = resizeIcon(new ImageIcon(getClass().getResource("/media/two.png")), tileSize, tileSize);
+        three = resizeIcon(new ImageIcon(getClass().getResource("/media/three.png")), tileSize, tileSize);
+        four = resizeIcon(new ImageIcon(getClass().getResource("/media/four.png")), tileSize, tileSize);
+        five = resizeIcon(new ImageIcon(getClass().getResource("/media/five.png")), tileSize, tileSize);
+        six = resizeIcon(new ImageIcon(getClass().getResource("/media/six.png")), tileSize, tileSize);
+        seven = resizeIcon(new ImageIcon(getClass().getResource("/media/seven.png")), tileSize, tileSize);
+        eight = resizeIcon(new ImageIcon(getClass().getResource("/media/eight.png")), tileSize, tileSize);
+        zero = resizeIcon(new ImageIcon(getClass().getResource("/media/zero.png")), tileSize, tileSize);
+        question = resizeIcon(new ImageIcon(getClass().getResource("/media/question.png")), tileSize, tileSize);
+        newGameIcon = resizeIcon(new ImageIcon(getClass().getResource("/media/button.png")),40, 40);
+    }
+    public Icon getNewGameIcon() {
+        return newGameIcon;
     }
     public Icon getRedMineIcon() {
         return redMineIcon;
