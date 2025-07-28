@@ -87,6 +87,24 @@ public class Game implements MouseListener, ActionListener, WindowListener{
         }
     }
     
+    public void firstClickZero(int x, int y) {
+        if (cellsRemaining != board.getColumns() * board.getRows()) {
+            return;
+        }
+
+        Cell cells[][] = board.getBoardCells();
+        if (!cells[x][y].getMine() && (cells[x][y].getNearbyMines() == 0)) {
+            if (!window.getTimerRunning()) {
+                window.startTimer();
+            }
+            return;
+        } else {
+            window.stopTimer();
+            newGame(currentDifficulty);
+            firstClickZero(x, y);
+        }
+
+    }
     public void checkGame() {
         if (cellsRemaining == cellsTarget) {
             gameWon();
@@ -311,7 +329,7 @@ public class Game implements MouseListener, ActionListener, WindowListener{
             return;
         }
         if (!gameRunning) {
-            window.startTimer();
+            //window.startTimer();
             gameRunning = true;
             System.out.println("game is running!");
         }
@@ -321,6 +339,8 @@ public class Game implements MouseListener, ActionListener, WindowListener{
             String[] coords = tile.getName().split(",");
             int row = Integer.parseInt(coords[0]);
             int column = Integer.parseInt(coords[1]);
+            firstClickZero(row, column);
+
             boolean checkIfMine = board.getBoardCells()[row][column].getMine();
             int nearbyMines = board.getBoardCells()[row][column].getNearbyMines();
             

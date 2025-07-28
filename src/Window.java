@@ -220,6 +220,11 @@ public class Window extends JFrame implements WindowListener {
         }
     }
 
+    public boolean getTimerRunning() {
+        return timerRunning;
+    }
+
+
     public void resetTimer() {
         gameTime = 0;
         setTimerValue(gameTime);

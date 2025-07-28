@@ -8,8 +8,7 @@ Features:
   Flood fill zeros
   Quick restart
   Custom icons
-
-To do:
-  why is winning/losing game so slow?
-  never have first click be a mine
+  First click is always a zero
   
+To do:
+  click on  number to clear adjacent if that number mines are already flagged
