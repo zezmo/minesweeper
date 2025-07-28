@@ -11,6 +11,7 @@ import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.Timer;
 import javax.swing.border.Border;
 
 public class Window extends JFrame implements WindowListener {
@@ -41,7 +42,7 @@ public class Window extends JFrame implements WindowListener {
     private JMenuItem intermediate;
     private JMenuItem expert;
 
-    private Thread timer;
+    private Timer timer;
     private boolean timerRunning;
     private int gameTime;
 
@@ -204,32 +205,19 @@ public class Window extends JFrame implements WindowListener {
     public void startTimer() {
         timerRunning = true;
 
-        timer = new Thread() {
-            @Override
-            public void run() {
-                while(timerRunning) {
-                    gameTime++;
-                    setTimerValue(gameTime);
-                    try {
-                        sleep(1000); // one second
-                    }
-                    catch(InterruptedException ex){}
-                }
-            }
-        };
+        timer = new Timer(1000, e -> {
+            gameTime++;
+            setTimerValue(gameTime);
+        });
 
         timer.start();
     }
 
     public void stopTimer() {
         timerRunning = false;
-
-        try {
-            if(timer != null) {
-                timer.join();
-            } 
-        } catch (InterruptedException ex) {}
-
+        if(timer != null) {
+            timer.stop();
+        }
     }
 
     public void resetTimer() {

@@ -9,3 +9,7 @@ Features:
   Quick restart
   Custom icons
 
+To do:
+  why is winning/losing game so slow?
+  never have first click be a mine
+  
