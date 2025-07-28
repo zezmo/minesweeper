@@ -169,7 +169,7 @@ public class Window extends JFrame implements WindowListener {
         
         mainPanel = new JPanel();
         mainPanel.setBorder(loweredbevel);
-        mainPanel.setBackground(Color.GRAY);
+        mainPanel.setBackground(Color.LIGHT_GRAY);
         mainPanel.setOpaque(true);
 
         gamePanel = new JPanel();
@@ -280,7 +280,7 @@ public class Window extends JFrame implements WindowListener {
                 tiles[i][j].setName(Integer.toString(i) + "," + Integer.toString(j));
                 tiles[i][j].setAlignmentX(JLabel.CENTER);
                 tiles[i][j].setAlignmentY(JLabel.CENTER);
-                tiles[i][j].setBorder(raisedbevel);
+                //tiles[i][j].setBorder(raisedbevel);
                 tiles[i][j].setIcon(tileIcon);
                 tiles[i][j].setPreferredSize(tileDimension);
                 gamePanel.add(tiles[i][j]);
