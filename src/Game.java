@@ -228,7 +228,7 @@ public class Game implements MouseListener, ActionListener, WindowListener{
         String whichIcon = board.whichIcon(row, column);
 
         cells[row][column].setShow(true);
-        labels[row][column].setBorder(window.getLoweredBorder());
+        //labels[row][column].setBorder(window.getLoweredBorder());
         cellsRemaining --;
 
         switch (whichIcon) {

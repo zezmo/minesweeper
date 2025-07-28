@@ -139,6 +139,7 @@ public class Window extends JFrame implements WindowListener {
         newGameButton.setBorder(raisedbevel);
         newGameButton.setName("newGame");
         buttonPanel.add(newGameButton);
+        buttonPanel.setOpaque(false);
 
         leftWrapper.add(minesDisplay);
         leftWrapper.setOpaque(false);
@@ -193,7 +194,7 @@ public class Window extends JFrame implements WindowListener {
                 tiles[i][j].setName(Integer.toString(i) + "," + Integer.toString(j));
                 tiles[i][j].setAlignmentX(JLabel.CENTER);
                 tiles[i][j].setAlignmentY(JLabel.CENTER);
-                tiles[i][j].setBorder(raisedbevel);
+                //tiles[i][j].setBorder(raisedbevel);
                 tiles[i][j].setIcon(tileIcon);
                 tiles[i][j].setPreferredSize(tileDimension);
 
