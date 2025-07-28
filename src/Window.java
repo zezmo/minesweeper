@@ -254,10 +254,9 @@ public class Window extends JFrame implements WindowListener {
         }
     }
 
-
     public void minusMine() {
         minesRemaining--;
-        System.out.print(minesRemaining);
+        //System.out.print(minesRemaining);
         setMinesValue(minesRemaining);
     }
     public void plusMine() {
@@ -271,8 +270,8 @@ public class Window extends JFrame implements WindowListener {
         columns = c;
         minesRemaining = m;
 
-        System.out.println(rows);
-        System.out.println(columns);
+        //System.out.println(rows);
+        //System.out.println(columns);
 
         
         gamePanel.setSize(rows*tileSize, columns*tileSize);

@@ -1,31 +1,46 @@
+import java.awt.BorderLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.awt.event.WindowListener;
+
+import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
+import javax.swing.border.EmptyBorder;
 
 public class Game implements MouseListener, ActionListener, WindowListener{
+    private int cellsRemaining;
+    private int cellsTarget;
+    private String currentDifficulty;
     private Board board;
     private Window window;
     private boolean gameRunning;
-    private boolean gameWon;
+    private boolean gameComplete;
 
     public Game (String difficulty) {
+        currentDifficulty = difficulty;
         newBoardSetUp(difficulty);
-        gameWon = false;
+        gameComplete = false;
         this.window = new Window(board.getRows(), board.getColumns(), board.getMines());
         this.window.setTileListeners(this);
         this.window.setWindowAndMenuListeners(this);
         this.window.setMinesValue(board.getMines());
         this.gameRunning = false;
         window.setVisible(true);
+
     }
 
     public void newGame(String difficulty) {
+        currentDifficulty = difficulty;
+        gameComplete = false;
         this.gameRunning = false;
         newBoardSetUp(difficulty);
         this.window.resetTimer();
@@ -54,20 +69,136 @@ public class Game implements MouseListener, ActionListener, WindowListener{
         switch(d) {
             case "easy": 
                 this.board = new Board(9, 9, 10);
+                cellsRemaining = 9*9;
+                cellsTarget = 10;
                 break;
             case "intermediate": 
                 this.board = new Board(16, 16, 40);
+                cellsRemaining = 16*16;
+                cellsTarget = 40;
                 break;
             case "expert": 
                 this.board = new Board(16, 32, 99);
+                cellsRemaining = 16*32;
+                cellsTarget = 99;
                 break;
             default: 
                 break;
         }
     }
-
+    
     public void checkGame() {
+        if (cellsRemaining == cellsTarget) {
+            gameWon();
+        } else return;
+    }
 
+    public void gameWon() {
+        gameComplete = true;
+        gameRunning = false;
+        window.stopTimer();
+        showAllMines(-1, -1); //position does not matter here just want to show all mines
+        winDialog();
+    }
+
+    public void winDialog() {
+
+        JDialog winDialog = new JDialog(window, "Success!", true);
+        
+        JLabel winMessage = new JLabel("You've won the game! :)", SwingConstants.CENTER );
+
+        JPanel optionsPanel = new JPanel();
+        optionsPanel.setLayout(new GridLayout(1, 3, 15, 0));
+        JButton playAgain = new JButton("Play Again");
+        JButton exit = new JButton("Exit");
+        JButton cancel = new JButton("Cancel");
+        exit.addActionListener((ActionEvent e) -> {
+            System.exit(0);
+        });
+        playAgain.addActionListener((ActionEvent e) -> {
+            winDialog.dispose();
+            newGame(currentDifficulty);
+        });
+        cancel.addActionListener((ActionEvent e) -> {
+            winDialog.dispose();
+            windowClosing(null);
+        });
+        optionsPanel.add(playAgain);
+        optionsPanel.add(exit);
+        optionsPanel.add(cancel);
+
+        JPanel winPanel = new JPanel();
+        winPanel.setLayout(new BorderLayout(20, 20));
+        winPanel.add(winMessage, BorderLayout.NORTH);
+        winPanel.add(optionsPanel, BorderLayout.SOUTH);
+
+        winPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+        winDialog.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        winDialog.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                winDialog.dispose();
+            }
+        });
+
+        winDialog.add(winPanel);
+        winDialog.pack();
+        winDialog.setLocationRelativeTo(window);
+        winDialog.setVisible(true);
+    }
+
+    public void gameLost() {
+        gameComplete = true;
+        gameRunning = false;
+        window.stopTimer();
+        loseDialog();
+    }
+
+    public void loseDialog() {
+        JDialog loseDialog = new JDialog(window, "Kaboom!", true);
+        
+        JLabel loseMessage = new JLabel("You've found a mine, whoops! :(", SwingConstants.CENTER );
+
+        JPanel optionsPanel = new JPanel();
+        optionsPanel.setLayout(new GridLayout(1, 3, 15, 0));
+        JButton playAgain = new JButton("Play Again");
+        JButton exit = new JButton("Exit");
+        JButton cancel = new JButton("Cancel");
+        exit.addActionListener((ActionEvent e) -> {
+            System.exit(0);
+        });
+        playAgain.addActionListener((ActionEvent e) -> {
+            loseDialog.dispose();
+            newGame(currentDifficulty);
+        });
+        cancel.addActionListener((ActionEvent e) -> {
+            loseDialog.dispose();
+            windowClosing(null);
+        });
+        optionsPanel.add(playAgain);
+        optionsPanel.add(exit);
+        optionsPanel.add(cancel);
+
+        JPanel losePanel = new JPanel();
+        losePanel.setLayout(new BorderLayout(20, 20));
+        losePanel.add(loseMessage, BorderLayout.NORTH);
+        losePanel.add(optionsPanel, BorderLayout.SOUTH);
+
+        losePanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+        loseDialog.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        loseDialog.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                loseDialog.dispose();
+            }
+        });
+
+        loseDialog.add(losePanel);
+        loseDialog.pack();
+        loseDialog.setLocationRelativeTo(window);
+        loseDialog.setVisible(true);
     }
 
     public void setLabelImage(int row, int column) {
@@ -80,6 +211,7 @@ public class Game implements MouseListener, ActionListener, WindowListener{
 
         cells[row][column].setShow(true);
         labels[row][column].setBorder(window.getLoweredBorder());
+        cellsRemaining --;
 
         switch (whichIcon) {
             case "mine":
@@ -147,11 +279,11 @@ public class Game implements MouseListener, ActionListener, WindowListener{
 
     public void showAllMines(int x, int y) {
         Cell cells[][] = board.getBoardCells();
-        JLabel tiles[][] = window.getTiles();
+        //JLabel tiles[][] = window.getTiles();
 
         for (int i=0; i < board.getRows(); i++) {
             for (int j=0; j < board.getRows(); j++) {
-                if(i==x && j==y && !gameWon) { 
+                if(i==x && j==y) { 
                     continue;
                 }
                 if(cells[i][j].getMine()) {
@@ -164,6 +296,9 @@ public class Game implements MouseListener, ActionListener, WindowListener{
 
     @Override
     public void mouseClicked(MouseEvent e) {
+        if(gameComplete){
+            return;
+        }
         if (!gameRunning) {
             window.startTimer();
             gameRunning = true;
@@ -179,6 +314,7 @@ public class Game implements MouseListener, ActionListener, WindowListener{
             int nearbyMines = board.getBoardCells()[row][column].getNearbyMines();
             
             if (SwingUtilities.isLeftMouseButton(e)) {
+
                 if(checkIfMine) {
                     JPanel panel = window.getGamePanel();
                     panel.setIgnoreRepaint(true);
@@ -188,6 +324,7 @@ public class Game implements MouseListener, ActionListener, WindowListener{
                     panel.setIgnoreRepaint(false);
                     panel.revalidate();
                     panel.repaint();
+                    gameLost();
 
                 } else if(nearbyMines == 0) {
                     JPanel panel = window.getGamePanel();
@@ -196,11 +333,11 @@ public class Game implements MouseListener, ActionListener, WindowListener{
                     panel.setIgnoreRepaint(false);
                     panel.revalidate();
                     panel.repaint();
-
+                    checkGame();
                 } 
                 else {
                     setLabelImage(row, column);
-
+                    checkGame();
                 }
             }
 
@@ -209,6 +346,7 @@ public class Game implements MouseListener, ActionListener, WindowListener{
                     if(board.getBoardCells()[row][column].getFlag() == "Q") {
                         board.getBoardCells()[row][column].setFlag("");
                         tile.setIcon(window.getTileIcon());
+
                     } else if (board.getBoardCells()[row][column].getFlag() == "F") {
                         board.getBoardCells()[row][column].setFlag("Q");
                         tile.setIcon(window.getQuestionIcon());
