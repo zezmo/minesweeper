@@ -71,6 +71,7 @@ public class Window extends JFrame implements WindowListener {
 
     public Window(int row, int column, int mine) {
         setResizable(false);
+        setLocationRelativeTo(null);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setIcons();
         setSize(width, height);
