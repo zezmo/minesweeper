@@ -3,7 +3,7 @@
  * @author kiunwong
  * https://kiunwong.blogspot.com/2012/09/seven-segments-display-in-java.html
  * 
- * changed slightly
+ * note: changed slightly from original.
  */
 
 import java.awt.Color;

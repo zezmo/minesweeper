@@ -359,7 +359,6 @@ public class Game implements MouseListener, ActionListener, WindowListener{
                     checkGame();
                 } 
                 else {
-                    JPanel panel = window.getGamePanel();
                     setLabelImage(row, column);
                     
                     checkGame();
@@ -391,16 +390,19 @@ public class Game implements MouseListener, ActionListener, WindowListener{
     @Override
     public void actionPerformed(ActionEvent e) {
         Object source = e.getSource();
-        
+
         if(source instanceof JMenuItem menuItem) {
             switch (menuItem.getName()) {
                 case "easy":
+                    window.stopTimer();
                     newGame("easy");
                     break;
                 case "intermediate":
+                    window.stopTimer();
                     newGame("intermediate");
                     break;
                 case "expert":
+                    window.stopTimer();
                     newGame("expert");
                     break;
                 default:

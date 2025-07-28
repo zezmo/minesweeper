@@ -4,6 +4,7 @@ import java.awt.event.*;
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
+import java.awt.image.*;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -73,6 +74,8 @@ public class Window extends JFrame implements WindowListener {
     public Window(int row, int column, int mine) {
         setResizable(false);
         setLocationRelativeTo(null);
+        ImageIcon windowIcon = new ImageIcon(getClass().getResource("/media/icon-minesweeper.png"));
+        setIconImage(windowIcon.getImage());
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setIcons();
         setSize(width, height);
