@@ -46,7 +46,6 @@ public class Window extends JFrame implements WindowListener {
     private int gameTime;
 
     private JButton newGameButton;
-    //private JLabel newGameLabel;
     
     private int minesRemaining;
 
@@ -101,8 +100,6 @@ public class Window extends JFrame implements WindowListener {
         menuBar.add(gameMenu);
         setJMenuBar(menuBar);
 
-
-
         outerPanel = new JPanel();
         outerPanel.setLayout(new BorderLayout());
 
@@ -136,6 +133,7 @@ public class Window extends JFrame implements WindowListener {
         newGameButton.setIcon(newGameIcon);
         newGameButton.setPreferredSize(buttonDimension);
         newGameButton.setBorder(raisedbevel);
+        newGameButton.setName("newGame");
         buttonPanel.add(newGameButton);
 
         leftWrapper.add(minesDisplay);
@@ -309,6 +307,7 @@ public class Window extends JFrame implements WindowListener {
         easy.addActionListener(game);
         intermediate.addActionListener(game);
         expert.addActionListener(game);
+        newGameButton.addActionListener(game);
     }
 
     //==================================
@@ -389,7 +388,9 @@ public class Window extends JFrame implements WindowListener {
         return gamePanel;
     }
     public JLabel[][] getTiles() {return tiles;}
-
+    public JButton getNewgameButton() {
+        return newGameButton;
+    }
     // window listener methods
     public void windowClosed(WindowEvent e) {
     }

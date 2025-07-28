@@ -101,6 +101,7 @@ public class Game implements MouseListener, ActionListener, WindowListener{
         winDialog();
     }
 
+    @SuppressWarnings("unused")
     public void winDialog() {
 
         JDialog winDialog = new JDialog(window, "Success!", true);
@@ -112,14 +113,14 @@ public class Game implements MouseListener, ActionListener, WindowListener{
         JButton playAgain = new JButton("Play Again");
         JButton exit = new JButton("Exit");
         JButton cancel = new JButton("Cancel");
-        exit.addActionListener((ActionEvent e) -> {
+        exit.addActionListener(e -> {
             System.exit(0);
         });
-        playAgain.addActionListener((ActionEvent e) -> {
+        playAgain.addActionListener(e -> {
             winDialog.dispose();
             newGame(currentDifficulty);
         });
-        cancel.addActionListener((ActionEvent e) -> {
+        cancel.addActionListener(e -> {
             winDialog.dispose();
             windowClosing(null);
         });
@@ -165,14 +166,14 @@ public class Game implements MouseListener, ActionListener, WindowListener{
         JButton playAgain = new JButton("Play Again");
         JButton exit = new JButton("Exit");
         JButton cancel = new JButton("Cancel");
-        exit.addActionListener((ActionEvent e) -> {
+        exit.addActionListener((@SuppressWarnings("unused") ActionEvent e) -> {
             System.exit(0);
         });
-        playAgain.addActionListener((ActionEvent e) -> {
+        playAgain.addActionListener((@SuppressWarnings("unused") ActionEvent e) -> {
             loseDialog.dispose();
             newGame(currentDifficulty);
         });
-        cancel.addActionListener((ActionEvent e) -> {
+        cancel.addActionListener((@SuppressWarnings("unused") ActionEvent e) -> {
             loseDialog.dispose();
             windowClosing(null);
         });
@@ -365,20 +366,32 @@ public class Game implements MouseListener, ActionListener, WindowListener{
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        JMenuItem menuItem = (JMenuItem) e.getSource();
-        switch (menuItem.getName()) {
-            case "easy":
-                newGame("easy");
-                break;
-            case "intermediate":
-                newGame("intermediate");
-                break;
-            case "expert":
-                newGame("expert");
-                break;
-            default:
-                break;
+        Object source = e.getSource();
+        
+        if(source instanceof JMenuItem menuItem) {
+            switch (menuItem.getName()) {
+                case "easy":
+                    newGame("easy");
+                    break;
+                case "intermediate":
+                    newGame("intermediate");
+                    break;
+                case "expert":
+                    newGame("expert");
+                    break;
+                default:
+                    break;
+            }
         }
+        else if (source instanceof JButton button) {
+            if (button.getName() =="newGame") {
+                gameComplete = true;
+                gameRunning=false;
+                window.stopTimer();
+                newGame(currentDifficulty);
+            }
+        }
+        
     }
 
     @Override
