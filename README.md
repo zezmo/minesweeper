@@ -19,9 +19,9 @@ Java version 21 or newer to run the jar executable.
 - MVC design pattern
 
 ## Screenshots
-<p align="center"><img src="public/media/screenshots/screenshot_easy_idle.jpg" alt="easy idle"></p>
-<p align="center"><img src="public/media/screenshots/screenshot_select_mode.jpg" alt="mode select"></p>
-<p align="center"><img src="public/media/screenshots/screenshot_intermediate_started.jpg" alt="intermediate started game"></p>
-<p align="center"><img src="public/media/screenshots/screenshot_in_progress.jpg" alt="game in progress"></p>
-<p align="center"><img src="public/media/screenshots/screenshot_lose.jpg" alt="game lost!"></p>
-<p align="center"><img src="public/media/screenshots/screenshot_win.jpg" alt="game won!"></p>
+<p align="center"><img src="src/media/screenshots/screenshot_easy_idle.jpg" alt="easy idle"></p>
+<p align="center"><img src="src/media/screenshots/screenshot_select_mode.jpg" alt="mode select"></p>
+<p align="center"><img src="src/media/screenshots/screenshot_intermediate_started.jpg" alt="intermediate started game"></p>
+<p align="center"><img src="src/media/screenshots/screenshot_in_progress.jpg" alt="game in progress"></p>
+<p align="center"><img src="src/media/screenshots/screenshot_lose.jpg" alt="game lost!"></p>
+<p align="center"><img src="src/media/screenshots/screenshot_win.jpg" alt="game won!"></p>
