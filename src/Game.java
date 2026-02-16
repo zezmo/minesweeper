@@ -322,70 +322,6 @@ public class Game implements MouseListener, ActionListener, WindowListener{
         panel.revalidate();
         panel.repaint();
     }
-
-    @Override
-    public void mouseClicked(MouseEvent e) {
-        if(gameComplete){
-            return;
-        }
-        if (!gameRunning) {
-            //window.startTimer();
-            gameRunning = true;
-            System.out.println("game is running!");
-        }
-
-        if (gameRunning) {
-            JLabel tile = (JLabel)e.getSource();
-            String[] coords = tile.getName().split(",");
-            int row = Integer.parseInt(coords[0]);
-            int column = Integer.parseInt(coords[1]);
-            firstClickZero(row, column);
-
-            boolean checkIfMine = board.getBoardCells()[row][column].getMine();
-            int nearbyMines = board.getBoardCells()[row][column].getNearbyMines();
-            
-            if (SwingUtilities.isLeftMouseButton(e)) {
-
-                if(checkIfMine) {
-                    window.getTiles()[row][column].setIcon(window.getRedMineIcon());
-                    window.stopTimer();
-                    showAllMines(row, column);
-
-                    gameLost();
-
-                } else if(nearbyMines == 0) {
-                    clearAdjacentZeros(row, column);
-
-                    checkGame();
-                } 
-                else {
-                    setLabelImage(row, column);
-                    
-                    checkGame();
-                }
-            }
-
-            else if (SwingUtilities.isRightMouseButton(e)) {
-                if (!board.getBoardCells()[row][column].getShow()) {
-                    if(board.getBoardCells()[row][column].getFlag() == "Q") {
-                        board.getBoardCells()[row][column].setFlag("");
-                        tile.setIcon(window.getTileIcon());
-
-                    } else if (board.getBoardCells()[row][column].getFlag() == "F") {
-                        board.getBoardCells()[row][column].setFlag("Q");
-                        tile.setIcon(window.getQuestionIcon());
-                        window.plusMine();
-                    }
-                    else {
-                        board.getBoardCells()[row][column].setFlag("F");
-                        tile.setIcon(window.getFlagIcon());
-                        window.minusMine();
-                    }
-                } 
-            }
-
-        }
-    }
     
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -422,9 +358,85 @@ public class Game implements MouseListener, ActionListener, WindowListener{
 
     @Override
     public void mousePressed(MouseEvent e) {
+        if(gameComplete) return;
+            JLabel tile = (JLabel)e.getSource();
+            String[] coords = tile.getName().split(",");
+            int row = Integer.parseInt(coords[0]);
+            int column = Integer.parseInt(coords[1]);
+
+        if (SwingUtilities.isRightMouseButton(e)) {
+                if (!board.getBoardCells()[row][column].getShow()) {
+                    if(board.getBoardCells()[row][column].getFlag() == "Q") {
+                        board.getBoardCells()[row][column].setFlag("");
+                        tile.setIcon(window.getTileIcon());
+
+                    } else if (board.getBoardCells()[row][column].getFlag() == "F") {
+                        board.getBoardCells()[row][column].setFlag("Q");
+                        tile.setIcon(window.getQuestionIcon());
+                        window.plusMine();
+                    }
+                    else {
+                        board.getBoardCells()[row][column].setFlag("F");
+                        tile.setIcon(window.getFlagIcon());
+                        window.minusMine();
+                    }
+                    return;
+                }
+        }
     }
+
     @Override
     public void mouseReleased(MouseEvent e) {
+        if(gameComplete) return;
+        if (!SwingUtilities.isLeftMouseButton(e)) return;
+
+        JLabel tile = (JLabel)e.getSource();
+
+        if (!tile.contains(e.getPoint())) {
+            return;
+        }
+
+        if (!gameRunning) {
+            //window.startTimer();
+            gameRunning = true;
+            System.out.println("game is running!");
+        }
+
+        if (gameRunning) {
+            String[] coords = tile.getName().split(",");
+            int row = Integer.parseInt(coords[0]);
+            int column = Integer.parseInt(coords[1]);
+            firstClickZero(row, column);
+
+            boolean checkIfMine = board.getBoardCells()[row][column].getMine();
+            int nearbyMines = board.getBoardCells()[row][column].getNearbyMines();
+            
+
+            if (SwingUtilities.isLeftMouseButton(e)) {
+
+                if(checkIfMine) {
+                    window.getTiles()[row][column].setIcon(window.getRedMineIcon());
+                    window.stopTimer();
+                    showAllMines(row, column);
+
+                    gameLost();
+
+                } else if(nearbyMines == 0) {
+                    clearAdjacentZeros(row, column);
+
+                    checkGame();
+                } 
+                else {
+                    setLabelImage(row, column);
+                    
+                    checkGame();
+                }
+            }
+        }
+    }
+
+    @Override
+    public void mouseClicked(MouseEvent e) {
     }
     @Override
     public void mouseEntered(MouseEvent e) {
