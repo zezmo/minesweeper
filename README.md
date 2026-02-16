@@ -1,16 +1,19 @@
 ## About this project
 
-Clone minesweeper game. Practice creating a java application with GUI using MVC pattern.
+My main goal here was to practice MVC design pattern, OOP concepts, and make a faithful recreation of the classic game, Minesweeper!
 
 Included .ico for desktop shortcut icon.
 
+Java version 21 or newer to run the jar executable.
+
 ### Features:
 - Three difficulty modes
-- 7 segment display
+- 7 segment display for timer and mines remaining
 - Flood fill zeros
 - Quick restart
 - Custom icons
 - First click is always a zero
-  
-### To do:
-- click on  number to clear adjacent if that number mines are already flagged
+
+### What I Learned:
+- Deepen object oriented programming knowledge
+- MVC design pattern
