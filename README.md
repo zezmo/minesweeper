@@ -4,9 +4,9 @@ My main goal here was to practice MVC design pattern, OOP concepts, and make a f
 
 Get the most up to date executable .jar file from the releases to run! Java version 17 or newer required. (To check java installation in bash: java -version)<br>
 If java is not installed, you can run the following on Windows 10/11 PowerShell:
-- winget install Oracle.JDK.17
-- after installation, open a new terminal and check that installation was successful with java -version.
-- now you can run the .jar file and get cracking on some Minesweeper :)
+1.  winget install Oracle.JDK.17
+2.  after installation, open a new terminal and check that installation was successful with java -version.
+3.  now you can run the .jar file and get cracking on some Minesweeper :)
 
 To set icon, download the .ico file, create desktop shortcut, and go to shortcut Properties -> Change Icon.
 
