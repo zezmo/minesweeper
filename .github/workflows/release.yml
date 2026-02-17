@@ -1,4 +1,4 @@
-name: Build (Windows + Ubuntu) and Release JAR
+name: Build (Windows + Ubuntu) and Release JAR + Windows EXE
 
 on:
   push:
@@ -27,12 +27,15 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      # Windows build
-      - name: Compile (Windows)
+      # Windows build + package EXE
+      - name: Compile + Package (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
           Remove-Item -Recurse -Force bin -ErrorAction Ignore
+          Remove-Item -Recurse -Force dist -ErrorAction Ignore
+          Remove-Item -Recurse -Force out -ErrorAction Ignore
+
           New-Item -ItemType Directory -Force bin | Out-Null
           $files = Get-ChildItem -Recurse -Filter *.java src | ForEach-Object { $_.FullName }
           javac --release 17 -d bin $files
@@ -41,8 +44,28 @@ jobs:
             Copy-Item -Recurse -Force "src/media" "bin/media"
           }
 
+          # Build the Windows JAR
           jar cfe Minesweeper.jar App -C bin .
           Rename-Item Minesweeper.jar Minesweeper-windows.jar
+
+          # Prepare input folder for jpackage (expects jars in a folder)
+          New-Item -ItemType Directory -Force dist | Out-Null
+          Copy-Item ".\Minesweeper-windows.jar" ".\dist\Minesweeper.jar" -Force
+
+          $version = "${{ github.ref_name }}".TrimStart("v")
+
+          # Package Windows EXE with custom icon
+          jpackage `
+            --type exe `
+            --name Minesweeper `
+            --input .\dist `
+            --main-jar Minesweeper.jar `
+            --main-class App `
+            --icon .\minesweeper-icon.ico `
+            --dest .\out `
+            --app-version $version `
+            --win-shortcut `
+            --win-menu
 
       # Ubuntu build
       - name: Compile (Ubuntu)
@@ -60,11 +83,20 @@ jobs:
           jar cfe Minesweeper.jar App -C bin .
           mv Minesweeper.jar Minesweeper-ubuntu.jar
 
-      - name: Upload build artifact
+      # Upload JAR artifacts (both OSes)
+      - name: Upload JAR artifacts
         uses: actions/upload-artifact@v4
         with:
           name: jars-${{ matrix.os }}
           path: Minesweeper-*.jar
+
+      # Upload EXE artifact (Windows only)
+      - name: Upload Windows EXE artifact
+        if: runner.os == 'Windows'
+        uses: actions/upload-artifact@v4
+        with:
+          name: exe-windows
+          path: out/*.exe
 
   release:
     name: Create Release
@@ -75,12 +107,13 @@ jobs:
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
-          pattern: jars-*
+          pattern: "*"
           merge-multiple: true
 
-      - name: Create GitHub Release and upload JARs
+      - name: Create GitHub Release and upload assets
         uses: softprops/action-gh-release@v2
         with:
           files: |
             Minesweeper-windows.jar
             Minesweeper-ubuntu.jar
+            *.exe
