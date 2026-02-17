@@ -2,7 +2,7 @@
 
 My main goal here was to practice MVC design pattern, OOP concepts, and make a faithful recreation of the classic game, Minesweeper!
 
-Java version 17 or newer to run the jar executable. (To check java installation in bash: java --version)<br>
+Get the most up to date executable .jar file from the releases to run! Java version 17 or newer required. (To check java installation in bash: java --version)<br>
 
 To set icon, download the .ico file, create desktop shortcut, and go to shortcut Properties -> Change Icon.
 
