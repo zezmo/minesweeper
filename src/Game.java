@@ -1,4 +1,5 @@
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -15,6 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.SwingUtilities;
 import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 
 public class Game implements MouseListener, ActionListener, WindowListener{
     private int cellsRemaining;
@@ -263,9 +265,9 @@ public class Game implements MouseListener, ActionListener, WindowListener{
                 labels[row][column].setIcon(window.getEightIcon());
                 break;
             default:
-                break;
+                return;
         }
-
+        labels[row][column].setBorder(new LineBorder(new Color(111, 111, 111)));
     } 
 
     //recursive funtion to clear out blank tiles when a zero is found
