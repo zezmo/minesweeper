@@ -1,0 +1,86 @@
+name: Build (Windows + Ubuntu) and Release JAR
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      # Windows build
+      - name: Compile (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: |
+          Remove-Item -Recurse -Force bin -ErrorAction Ignore
+          New-Item -ItemType Directory -Force bin | Out-Null
+          $files = Get-ChildItem -Recurse -Filter *.java src | ForEach-Object { $_.FullName }
+          javac --release 17 -d bin $files
+
+          if (Test-Path "src/media") {
+            Copy-Item -Recurse -Force "src/media" "bin/media"
+          }
+
+          jar cfe Minesweeper.jar App -C bin .
+          Rename-Item Minesweeper.jar Minesweeper-windows.jar
+
+      # Ubuntu build
+      - name: Compile (Ubuntu)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          rm -rf bin
+          mkdir -p bin
+          javac --release 17 -d bin $(find src -name "*.java")
+
+          if [ -d "src/media" ]; then
+            cp -r src/media bin/media
+          fi
+
+          jar cfe Minesweeper.jar App -C bin .
+          mv Minesweeper.jar Minesweeper-ubuntu.jar
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: jars-${{ matrix.os }}
+          path: Minesweeper-*.jar
+
+  release:
+    name: Create Release
+    runs-on: ubuntu-latest
+    needs: build
+
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          pattern: jars-*
+          merge-multiple: true
+
+      - name: Create GitHub Release and upload JARs
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            Minesweeper-windows.jar
+            Minesweeper-ubuntu.jar
