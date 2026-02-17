@@ -4,7 +4,8 @@ My main goal here was to practice MVC design pattern, OOP concepts, and make a f
 
 Included .ico for desktop shortcut icon.
 
-Java version 21 or newer to run the jar executable.
+Java version 17 or newer to run the jar executable. To check java installation in bash: java --version
+To set icon, download the .ico file, create desktop shortcut, and go to shortcut Properties -> Change Icon.
 
 ### Features:
 - Three difficulty modes

@@ -397,9 +397,8 @@ public class Game implements MouseListener, ActionListener, WindowListener{
         }
 
         if (!gameRunning) {
-            //window.startTimer();
             gameRunning = true;
-            System.out.println("game is running!");
+            //System.out.println("game is running!");
         }
 
         if (gameRunning) {
