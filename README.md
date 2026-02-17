@@ -2,8 +2,6 @@
 
 My main goal here was to practice MVC design pattern, OOP concepts, and make a faithful recreation of the classic game, Minesweeper!
 
-Included .ico for desktop shortcut icon.
-
 Java version 17 or newer to run the jar executable. To check java installation in bash: java --version
 To set icon, download the .ico file, create desktop shortcut, and go to shortcut Properties -> Change Icon.
 
