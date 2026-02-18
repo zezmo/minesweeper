@@ -2,17 +2,22 @@
 
 My main goal here was to practice MVC design pattern, OOP concepts, and make a faithful recreation of the classic game, Minesweeper!
 
-How to Play: Get the most up to date (V1.0.1) .exe for Windows from the releases to run! 
+## How to play
 
-.jar is available for Windows and Ubuntu. Java version 17 or newer required. (To check java installation in bash: java -version)<br>
-If java is not installed, you can run the following on Windows 10/11 PowerShell:
-1.  winget install Oracle.JDK.17
-2.  after installation, open a new terminal and check that installation was successful with java -version.
-3.  now you can run the .jar file and get cracking on some Minesweeper :)
+### Windows 
+- Get the most up to date [Windows Installer](https://github.com/zezmo/Minesweeper/releases/latest/download/Minesweeper-Setup-Windows.exe) or [Windows Portable](https://github.com/zezmo/Minesweeper/releases/latest/download/Minesweeper-Portable-Windows.zip) from the releases section.
 
-To set icon, download the .ico file, create desktop shortcut, and go to shortcut Properties -> Change Icon.
+### macOS
+- [macOS dmg](https://github.com/zezmo/Minesweeper/releases/latest/download/Minesweeper-macOS.dmg) or [macOS Portable](https://github.com/zezmo/Minesweeper/releases/latest/download/Minesweeper-Portable-macOS.zip)
 
-### Features:
+### Linux
+- [Linux jar](https://github.com/zezmo/Minesweeper/releases/latest/download/Minesweeper-linux.jar) or [Linux Portable](https://github.com/zezmo/Minesweeper/releases/latest/download/Minesweeper-Portable-Linux.tar.gz)
+<br>
+<br>
+
+[All releases](https://github.com/zezmo/Minesweeper/releases)
+
+## Features:
 - Three difficulty modes
 - 7 segment display for timer and mines remaining
 - Flood fill zeros
@@ -20,7 +25,7 @@ To set icon, download the .ico file, create desktop shortcut, and go to shortcut
 - Custom icons
 - First click is always a zero
 
-### What I Learned:
+## What I Learned:
 - Deepen object oriented programming knowledge
 - MVC design pattern
 

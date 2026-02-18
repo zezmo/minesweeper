@@ -1,4 +1,4 @@
-name: Build (Windows + Ubuntu) and Release JAR + Windows EXE
+name: Build (Installers + Portable) and Release
 
 on:
   push:
@@ -15,7 +15,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [windows-latest, ubuntu-latest]
+        os: [windows-latest, macos-latest, ubuntu-latest]
 
     steps:
       - name: Checkout
@@ -27,34 +27,35 @@ jobs:
           distribution: temurin
           java-version: "17"
 
-      # Windows build + package EXE
-      - name: Compile + Package (Windows)
+      # ----------------------------
+      # WINDOWS: installer EXE + portable ZIP
+      # ----------------------------
+      - name: Build + Package (Windows)
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          Remove-Item -Recurse -Force bin -ErrorAction Ignore
-          Remove-Item -Recurse -Force dist -ErrorAction Ignore
-          Remove-Item -Recurse -Force out -ErrorAction Ignore
+          $version = "${{ github.ref_name }}".TrimStart("v")
 
+          Remove-Item -Recurse -Force bin, dist, out-installer, out-portable -ErrorAction Ignore
           New-Item -ItemType Directory -Force bin | Out-Null
+
+          # Compile
           $files = Get-ChildItem -Recurse -Filter *.java src | ForEach-Object { $_.FullName }
           javac --release 17 -d bin $files
 
-          if (Test-Path "src/media") {
-            Copy-Item -Recurse -Force "src/media" "bin/media"
-          }
+          # Copy resources
+          if (Test-Path "src/media") { Copy-Item -Recurse -Force "src/media" "bin/media" }
 
-          # Build the Windows JAR
+          # Build jar (used as jpackage input)
           jar cfe Minesweeper.jar App -C bin .
           Rename-Item Minesweeper.jar Minesweeper-windows.jar
 
-          # Prepare input folder for jpackage (expects jars in a folder)
+          # Stage jar for jpackage
           New-Item -ItemType Directory -Force dist | Out-Null
           Copy-Item ".\Minesweeper-windows.jar" ".\dist\Minesweeper.jar" -Force
 
-          $version = "${{ github.ref_name }}".TrimStart("v")
-
-          # Package Windows EXE with custom icon
+          # Installer EXE
+          New-Item -ItemType Directory -Force out-installer | Out-Null
           jpackage `
             --type exe `
             --name Minesweeper `
@@ -62,41 +63,156 @@ jobs:
             --main-jar Minesweeper.jar `
             --main-class App `
             --icon .\minesweeper-icon.ico `
-            --dest .\out `
+            --dest .\out-installer `
             --app-version $version `
             --win-shortcut `
             --win-menu
 
-      # Ubuntu build
-      - name: Compile (Ubuntu)
-        if: runner.os == 'Linux'
+          # Rename installer exe to consistent name
+          $exe = Get-ChildItem .\out-installer -Filter *.exe | Select-Object -First 1
+          Rename-Item $exe.FullName ("Minesweeper-Setup-$version.exe")
+
+          # Portable app-image (folder) -> zip
+          New-Item -ItemType Directory -Force out-portable | Out-Null
+          jpackage `
+            --type app-image `
+            --name Minesweeper `
+            --input .\dist `
+            --main-jar Minesweeper.jar `
+            --main-class App `
+            --icon .\minesweeper-icon.ico `
+            --dest .\out-portable `
+            --app-version $version
+
+          Compress-Archive -Path ".\out-portable\Minesweeper" -DestinationPath ("Minesweeper-Portable-Windows-$version.zip") -Force
+
+      # ----------------------------
+      # MACOS: DMG + portable ZIP (.app)
+      # ----------------------------
+      - name: Build + Package (macOS)
+        if: runner.os == 'macOS'
         shell: bash
         run: |
-          rm -rf bin
+          set -e
+          VERSION="${GITHUB_REF_NAME#v}"
+
+          rm -rf bin dist out-installer out-portable iconset.iconset minesweeper.icns
           mkdir -p bin
+
+          # Compile
           javac --release 17 -d bin $(find src -name "*.java")
 
+          # Copy resources
           if [ -d "src/media" ]; then
             cp -r src/media bin/media
           fi
 
+          # Build jar (used as jpackage input)
           jar cfe Minesweeper.jar App -C bin .
-          mv Minesweeper.jar Minesweeper-ubuntu.jar
+          mv Minesweeper.jar Minesweeper-macos.jar
 
-      # Upload JAR artifacts (both OSes)
-      - name: Upload JAR artifacts
+          # Stage jar for jpackage
+          mkdir -p dist
+          cp Minesweeper-macos.jar dist/Minesweeper.jar
+
+          # PNG -> ICNS (uses built-in mac tools)
+          mkdir -p iconset.iconset
+          sips -z 16 16     icon-minesweeper.png --out iconset.iconset/icon_16x16.png
+          sips -z 32 32     icon-minesweeper.png --out iconset.iconset/icon_16x16@2x.png
+          sips -z 32 32     icon-minesweeper.png --out iconset.iconset/icon_32x32.png
+          sips -z 64 64     icon-minesweeper.png --out iconset.iconset/icon_32x32@2x.png
+          sips -z 128 128   icon-minesweeper.png --out iconset.iconset/icon_128x128.png
+          sips -z 256 256   icon-minesweeper.png --out iconset.iconset/icon_128x128@2x.png
+          sips -z 256 256   icon-minesweeper.png --out iconset.iconset/icon_256x256.png
+          sips -z 512 512   icon-minesweeper.png --out iconset.iconset/icon_256x256@2x.png
+          sips -z 512 512   icon-minesweeper.png --out iconset.iconset/icon_512x512.png
+          sips -z 1024 1024 icon-minesweeper.png --out iconset.iconset/icon_512x512@2x.png
+          iconutil -c icns iconset.iconset -o minesweeper.icns
+
+          # Installer DMG (contains Minesweeper.app)
+          mkdir -p out-installer
+          jpackage \
+            --type dmg \
+            --name Minesweeper \
+            --input dist \
+            --main-jar Minesweeper.jar \
+            --main-class App \
+            --icon minesweeper.icns \
+            --dest out-installer \
+            --app-version "$VERSION"
+
+          DMG_PATH="$(ls out-installer/*.dmg | head -n 1)"
+          mv "$DMG_PATH" "out-installer/Minesweeper-$VERSION.dmg"
+
+          # Portable app-image -> zip the .app
+          mkdir -p out-portable
+          jpackage \
+            --type app-image \
+            --name Minesweeper \
+            --input dist \
+            --main-jar Minesweeper.jar \
+            --main-class App \
+            --icon minesweeper.icns \
+            --dest out-portable \
+            --app-version "$VERSION"
+
+          # Zip the .app cleanly (preserves metadata)
+          ditto -c -k --sequesterRsrc --keepParent "out-portable/Minesweeper.app" "Minesweeper-Portable-macOS-$VERSION.zip"
+
+      # ----------------------------
+      # LINUX: portable tar.gz (app-image) + optional jar
+      # ----------------------------
+      - name: Build + Package (Linux)
+        if: runner.os == 'Linux'
+        shell: bash
+        run: |
+          set -e
+          VERSION="${GITHUB_REF_NAME#v}"
+
+          rm -rf bin dist out-portable
+          mkdir -p bin
+
+          # Compile
+          javac --release 17 -d bin $(find src -name "*.java")
+
+          # Copy resources
+          if [ -d "src/media" ]; then
+            cp -r src/media bin/media
+          fi
+
+          # Build linux jar (optional to upload)
+          jar cfe Minesweeper.jar App -C bin .
+          mv Minesweeper.jar Minesweeper-linux.jar
+
+          # Stage jar for jpackage
+          mkdir -p dist
+          cp Minesweeper-linux.jar dist/Minesweeper.jar
+
+          # Portable app-image -> tar.gz
+          mkdir -p out-portable
+          jpackage \
+            --type app-image \
+            --name Minesweeper \
+            --input dist \
+            --main-jar Minesweeper.jar \
+            --main-class App \
+            --dest out-portable \
+            --app-version "$VERSION"
+
+          tar -czf "Minesweeper-Portable-Linux-$VERSION.tar.gz" -C out-portable Minesweeper
+
+      # Upload everything produced on this runner
+      - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: jars-${{ matrix.os }}
-          path: Minesweeper-*.jar
-
-      # Upload EXE artifact (Windows only)
-      - name: Upload Windows EXE artifact
-        if: runner.os == 'Windows'
-        uses: actions/upload-artifact@v4
-        with:
-          name: exe-windows
-          path: out/*.exe
+          name: build-${{ matrix.os }}
+          path: |
+            Minesweeper-Setup-*.exe
+            Minesweeper-Portable-Windows-*.zip
+            out-installer/*.dmg
+            Minesweeper-Portable-macOS-*.zip
+            Minesweeper-Portable-Linux-*.tar.gz
+            Minesweeper-linux.jar
 
   release:
     name: Create Release
@@ -104,16 +220,25 @@ jobs:
     needs: build
 
     steps:
-      - name: Download artifacts
+      - name: Download all artifacts
         uses: actions/download-artifact@v4
         with:
-          pattern: "*"
+          pattern: build-*
           merge-multiple: true
+
+      - name: Generate SHA256 checksums
+        shell: bash
+        run: |
+          sha256sum * 2>/dev/null | tee SHA256SUMS.txt || true
 
       - name: Create GitHub Release and upload assets
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            Minesweeper-windows.jar
-            Minesweeper-ubuntu.jar
-            *.exe
+            Minesweeper-Setup.exe
+            Minesweeper-Portable-Windows.zip
+            Minesweeper.dmg
+            Minesweeper-Portable-macOS.zip
+            Minesweeper-Portable-Linux.tar.gz
+            Minesweeper-linux.jar
+            SHA256SUMS.txt
