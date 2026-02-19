@@ -5,10 +5,10 @@ My main goal here was to practice MVC design pattern, OOP concepts, and make a f
 ## How to play
 
 ### Windows 
-- Get the most up to date [Windows Installer](https://github.com/zezmo/Minesweeper/releases/latest/download/Minesweeper-Setup-Windows.exe) or [Windows Portable](https://github.com/zezmo/Minesweeper/releases/latest/download/Minesweeper-Portable-Windows.zip) from the releases section.
+- Get the most up to date [Windows Installer](https://github.com/zezmo/Minesweeper/releases/latest/download/Minesweeper-Setup.exe) or [Windows Portable](https://github.com/zezmo/Minesweeper/releases/latest/download/Minesweeper-Portable-Windows.zip) from the releases section.
 
 ### macOS
-- [macOS dmg](https://github.com/zezmo/Minesweeper/releases/latest/download/Minesweeper-macOS.dmg) or [macOS Portable](https://github.com/zezmo/Minesweeper/releases/latest/download/Minesweeper-Portable-macOS.zip)
+- [macOS dmg](https://github.com/zezmo/Minesweeper/releases/latest/download/Minesweeper.dmg) or [macOS Portable](https://github.com/zezmo/Minesweeper/releases/latest/download/Minesweeper-Portable-macOS.zip)
 
 ### Linux
 - [Linux jar](https://github.com/zezmo/Minesweeper/releases/latest/download/Minesweeper-linux.jar) or [Linux Portable](https://github.com/zezmo/Minesweeper/releases/latest/download/Minesweeper-Portable-Linux.tar.gz)
