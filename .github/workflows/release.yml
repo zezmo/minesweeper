@@ -70,7 +70,7 @@ jobs:
 
           # Rename installer exe to consistent name
           $exe = Get-ChildItem .\out-installer -Filter *.exe | Select-Object -First 1
-          Rename-Item $exe.FullName ("Minesweeper-Setup-$version.exe")
+          Rename-Item $exe.FullName ("Minesweeper-Setup.exe")
 
           # Portable app-image (folder) -> zip
           New-Item -ItemType Directory -Force out-portable | Out-Null
@@ -84,7 +84,7 @@ jobs:
             --dest .\out-portable `
             --app-version $version
 
-          Compress-Archive -Path ".\out-portable\Minesweeper" -DestinationPath ("Minesweeper-Portable-Windows-$version.zip") -Force
+          Compress-Archive -Path ".\out-portable\Minesweeper" -DestinationPath ("Minesweeper-Portable-Windows.zip") -Force
 
       # ----------------------------
       # MACOS: DMG + portable ZIP (.app)
@@ -117,16 +117,16 @@ jobs:
 
           # PNG -> ICNS (uses built-in mac tools)
           mkdir -p iconset.iconset
-          sips -z 16 16     icon-minesweeper.png --out iconset.iconset/icon_16x16.png
-          sips -z 32 32     icon-minesweeper.png --out iconset.iconset/icon_16x16@2x.png
-          sips -z 32 32     icon-minesweeper.png --out iconset.iconset/icon_32x32.png
-          sips -z 64 64     icon-minesweeper.png --out iconset.iconset/icon_32x32@2x.png
-          sips -z 128 128   icon-minesweeper.png --out iconset.iconset/icon_128x128.png
-          sips -z 256 256   icon-minesweeper.png --out iconset.iconset/icon_128x128@2x.png
-          sips -z 256 256   icon-minesweeper.png --out iconset.iconset/icon_256x256.png
-          sips -z 512 512   icon-minesweeper.png --out iconset.iconset/icon_256x256@2x.png
-          sips -z 512 512   icon-minesweeper.png --out iconset.iconset/icon_512x512.png
-          sips -z 1024 1024 icon-minesweeper.png --out iconset.iconset/icon_512x512@2x.png
+          sips -z 16 16     src/media/icon-minesweeper.png --out iconset.iconset/icon_16x16.png
+          sips -z 32 32     src/media/icon-minesweeper.png --out iconset.iconset/icon_16x16@2x.png
+          sips -z 32 32     src/media/icon-minesweeper.png --out iconset.iconset/icon_32x32.png
+          sips -z 64 64     src/media/icon-minesweeper.png --out iconset.iconset/icon_32x32@2x.png
+          sips -z 128 128   src/media/icon-minesweeper.png --out iconset.iconset/icon_128x128.png
+          sips -z 256 256   src/media/icon-minesweeper.png --out iconset.iconset/icon_128x128@2x.png
+          sips -z 256 256   src/media/icon-minesweeper.png --out iconset.iconset/icon_256x256.png
+          sips -z 512 512   src/media/icon-minesweeper.png --out iconset.iconset/icon_256x256@2x.png
+          sips -z 512 512   src/media/icon-minesweeper.png --out iconset.iconset/icon_512x512.png
+          sips -z 1024 1024 src/media/icon-minesweeper.png --out iconset.iconset/icon_512x512@2x.png
           iconutil -c icns iconset.iconset -o minesweeper.icns
 
           # Installer DMG (contains Minesweeper.app)
@@ -142,7 +142,7 @@ jobs:
             --app-version "$VERSION"
 
           DMG_PATH="$(ls out-installer/*.dmg | head -n 1)"
-          mv "$DMG_PATH" "out-installer/Minesweeper-$VERSION.dmg"
+          mv "$DMG_PATH" "out-installer/Minesweeper.dmg"
 
           # Portable app-image -> zip the .app
           mkdir -p out-portable
@@ -157,7 +157,7 @@ jobs:
             --app-version "$VERSION"
 
           # Zip the .app cleanly (preserves metadata)
-          ditto -c -k --sequesterRsrc --keepParent "out-portable/Minesweeper.app" "Minesweeper-Portable-macOS-$VERSION.zip"
+          ditto -c -k --sequesterRsrc --keepParent "out-portable/Minesweeper.app" "Minesweeper-Portable-macOS.zip"
 
       # ----------------------------
       # LINUX: portable tar.gz (app-image) + optional jar
@@ -199,7 +199,7 @@ jobs:
             --dest out-portable \
             --app-version "$VERSION"
 
-          tar -czf "Minesweeper-Portable-Linux-$VERSION.tar.gz" -C out-portable Minesweeper
+          tar -czf "Minesweeper-Portable-Linux.tar.gz" -C out-portable Minesweeper
 
       # Upload everything produced on this runner
       - name: Upload artifacts
@@ -207,11 +207,11 @@ jobs:
         with:
           name: build-${{ matrix.os }}
           path: |
-            Minesweeper-Setup-*.exe
-            Minesweeper-Portable-Windows-*.zip
-            out-installer/*.dmg
-            Minesweeper-Portable-macOS-*.zip
-            Minesweeper-Portable-Linux-*.tar.gz
+            Minesweeper-Setup.exe
+            Minesweeper-Portable-Windows.zip
+            out-installer/Minesweeper.dmg
+            Minesweeper-Portable-macOS.zip
+            Minesweeper-Portable-Linux.tar.gz
             Minesweeper-linux.jar
 
   release:
