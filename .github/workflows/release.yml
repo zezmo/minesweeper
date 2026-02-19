@@ -68,9 +68,12 @@ jobs:
             --win-shortcut `
             --win-menu
 
-          # Rename installer exe to consistent name
+          # Rename installer exe to consistent name (still in out-installer)
           $exe = Get-ChildItem .\out-installer -Filter *.exe | Select-Object -First 1
-          Rename-Item $exe.FullName ("Minesweeper-Setup.exe")
+          Rename-Item $exe.FullName "Minesweeper-Setup.exe"
+
+          # Move to repo root so upload-artifact & release can find it
+          Move-Item ".\out-installer\Minesweeper-Setup.exe" ".\Minesweeper-Setup.exe" -Force
 
           # Portable app-image (folder) -> zip
           New-Item -ItemType Directory -Force out-portable | Out-Null
@@ -144,6 +147,9 @@ jobs:
           DMG_PATH="$(ls out-installer/*.dmg | head -n 1)"
           mv "$DMG_PATH" "out-installer/Minesweeper.dmg"
 
+          # Copy to repo root so upload-artifact & release can find it
+          cp "out-installer/Minesweeper.dmg" "./Minesweeper.dmg"
+
           # Portable app-image -> zip the .app
           mkdir -p out-portable
           jpackage \
@@ -201,6 +207,15 @@ jobs:
 
           tar -czf "Minesweeper-Portable-Linux.tar.gz" -C out-portable Minesweeper
 
+      # Optional but useful: prove outputs exist
+      - name: List outputs
+        shell: bash
+        run: |
+          echo "=== workspace ==="
+          ls -la
+          echo "=== out-installer ==="
+          ls -la out-installer || true
+
       # Upload everything produced on this runner
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
@@ -209,7 +224,7 @@ jobs:
           path: |
             Minesweeper-Setup.exe
             Minesweeper-Portable-Windows.zip
-            out-installer/Minesweeper.dmg
+            Minesweeper.dmg
             Minesweeper-Portable-macOS.zip
             Minesweeper-Portable-Linux.tar.gz
             Minesweeper-linux.jar
@@ -229,7 +244,14 @@ jobs:
       - name: Generate SHA256 checksums
         shell: bash
         run: |
-          sha256sum * 2>/dev/null | tee SHA256SUMS.txt || true
+          sha256sum \
+            Minesweeper-Setup.exe \
+            Minesweeper-Portable-Windows.zip \
+            Minesweeper.dmg \
+            Minesweeper-Portable-macOS.zip \
+            Minesweeper-Portable-Linux.tar.gz \
+            Minesweeper-linux.jar \
+            2>/dev/null | tee SHA256SUMS.txt || true
 
       - name: Create GitHub Release and upload assets
         uses: softprops/action-gh-release@v2
