@@ -5,6 +5,7 @@
  * 
  * note: changed slightly from original.
  */
+package view;
 
 import java.awt.Color;
 import java.awt.Dimension;

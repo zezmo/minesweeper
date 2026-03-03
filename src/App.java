@@ -1,5 +1,7 @@
+import model.Difficulty;
+
 public class App {
     public static void main(String[] args) throws Exception {
-        new Game("easy");
+        new controller.Game(Difficulty.EASY);
     }
 }

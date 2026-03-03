@@ -1,27 +1,63 @@
-import java.awt.*;
-import java.awt.event.*;
+package view;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.GridBagLayout;
+import java.awt.GridLayout;
+import java.awt.Image;
 
 import javax.swing.BorderFactory;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDialog;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
-import javax.swing.Timer;
+import javax.swing.SwingConstants;
 import javax.swing.border.Border;
+import javax.swing.border.EmptyBorder;
+import javax.swing.border.LineBorder;
 
-public class Window extends JFrame implements WindowListener {
+public class Window extends JFrame{
+    private Icon mineIcon;
+    private Icon redMineIcon;
+    private Icon tileIcon;
+    private Icon flagIcon;
+    private Icon one;
+    private Icon two;
+    private Icon three;
+    private Icon four;
+    private Icon five;
+    private Icon six;
+    private Icon seven;
+    private Icon eight;
+    private Icon zero;
+    private Icon question;
+    private Icon newGameIcon;
+
+    public enum TileFace {
+        COVERED,
+        FLAG,
+        QUESTION,
+        MINE,
+        RED_MINE,
+        NUM0, NUM1, NUM2, NUM3, NUM4, NUM5, NUM6, NUM7, NUM8
+    }
+
+    public enum EndChoice { PLAY_AGAIN, EXIT, CANCEL };
     private final String title = "Minesweeper";
     private int width, height;
     private final int tileSize = 23;
     private final Dimension tileDimension = new Dimension(tileSize, tileSize);
     private final Dimension buttonDimension = new Dimension(42,42);
     private final Dimension segmentsDimension = new Dimension(97, 55);
-    private SegmentDisplay minesSegment[];
+    private SegmentDisplay flagsRemainingSegment[];
     private SegmentDisplay timerSegment[];
     Border raisedbevel = BorderFactory.createRaisedBevelBorder();
     Border loweredbevel = BorderFactory.createLoweredBevelBorder();
@@ -42,50 +78,28 @@ public class Window extends JFrame implements WindowListener {
     private JMenuItem intermediate;
     private JMenuItem expert;
 
-    private Timer timer;
-    private boolean timerRunning;
-    private int gameTime;
-
     private JButton newGameButton;
-    
-    private int minesRemaining;
 
     private JLabel[][] tiles;
     private int rows;
-    private int columns;
-
-    private Icon mineIcon;
-    private Icon redMineIcon;
-    private Icon tileIcon;
-    private Icon flagIcon;
-    private Icon one;
-    private Icon two;
-    private Icon three;
-    private Icon four;
-    private Icon five;
-    private Icon six;
-    private Icon seven;
-    private Icon eight;
-    private Icon zero;
-    private Icon question;
-    private Icon newGameIcon;
-
-    public Window(int row, int column, int mine) {
+    private int cols;
+    
+    public Window(int r, int c) {
         setResizable(false);
         setLocationRelativeTo(null);
         ImageIcon windowIcon = new ImageIcon(getClass().getResource("/media/icon-minesweeper.png"));
         setIconImage(windowIcon.getImage());
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setIcons();
-        setSize(width, height);
         setTitle(title);
 
-        this.rows = row;
-        this.columns = column;
-        minesRemaining = mine;
+        this.rows = r;
+        this.cols = c;
 
-        width = columns*tileSize +20;
+        width = cols*tileSize +20;
         height = rows*tileSize + 80;
+
+        setSize(width, height);
 
         menuBar = new JMenuBar();
         gameMenu = new JMenu("Game");
@@ -153,7 +167,7 @@ public class Window extends JFrame implements WindowListener {
         headerPanel.add(rightWrapper, BorderLayout.EAST);
 
         timerSegment = new SegmentDisplay[3];
-        minesSegment = new SegmentDisplay[3];
+        flagsRemainingSegment = new SegmentDisplay[3];
         
         for(int i=0; i<3; i++) {
             timerSegment[i] = new SegmentDisplay();
@@ -162,10 +176,9 @@ public class Window extends JFrame implements WindowListener {
         }
 
         for(int i=0; i<3; i++) {
-            minesSegment[i] = new SegmentDisplay();
-            minesDisplay.add(minesSegment[i]);
+            flagsRemainingSegment[i] = new SegmentDisplay();
+            minesDisplay.add(flagsRemainingSegment[i]);
         }
-        gameTime = 0;
         
         mainPanel = new JPanel();
         mainPanel.setBorder(loweredbevel);
@@ -173,9 +186,9 @@ public class Window extends JFrame implements WindowListener {
         mainPanel.setOpaque(true);
 
         gamePanel = new JPanel();
-        gamePanel.setLayout(new GridLayout(rows, columns, 0, 0));
+        gamePanel.setLayout(new GridLayout(rows, cols, 0, 0));
         gamePanel.setBorder(loweredbevel);
-        gamePanel.setSize(rows*tileSize, columns*tileSize);
+        gamePanel.setSize(rows*tileSize, cols*tileSize);
         outerPanel.add(mainPanel, BorderLayout.CENTER);
         outerPanel.setBorder(raisedbevel);
         mainPanel.add(gamePanel);
@@ -186,15 +199,15 @@ public class Window extends JFrame implements WindowListener {
         // game tiles
         //===============================================================
         
-        tiles = new JLabel[rows][columns];
+        tiles = new JLabel[rows][cols];
 
         for (int i=0; i < rows; i++) {
-            for (int j=0; j < columns; j++) {
+            for (int j=0; j < cols; j++) {
                 tiles[i][j] = new JLabel("");
                 tiles[i][j].setName(Integer.toString(i) + "," + Integer.toString(j));
                 tiles[i][j].setAlignmentX(JLabel.CENTER);
                 tiles[i][j].setAlignmentY(JLabel.CENTER);
-                //tiles[i][j].setBorder(raisedbevel);
+                tiles[i][j].setBorder(new LineBorder(new Color(111, 111, 111)));
                 tiles[i][j].setIcon(tileIcon);
                 tiles[i][j].setPreferredSize(tileDimension);
 
@@ -205,33 +218,42 @@ public class Window extends JFrame implements WindowListener {
         pack();
     }
 
-    public void startTimer() {
-        timerRunning = true;
+    //====================================================
+    // redraw functions
+    //====================================================
 
-        timer = new Timer(1000, e -> {
-            gameTime++;
-            setTimerValue(gameTime);
-        });
+    public void rebuildBoard(int newRows, int newCols) {
+        this.rows = newRows;
+        this.cols = newCols;
 
-        timer.start();
-    }
+        gamePanel.removeAll();
+        gamePanel.setLayout(new GridLayout(rows, cols, 0, 0));
 
-    public void stopTimer() {
-        timerRunning = false;
-        if(timer != null) {
-            timer.stop();
+        tiles = new JLabel[rows][cols];
+
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                tiles[i][j] = new JLabel("");
+                tiles[i][j].setName(Integer.toString(i) + "," + Integer.toString(j));
+                tiles[i][j].setAlignmentX(JLabel.CENTER);
+                tiles[i][j].setAlignmentY(JLabel.CENTER);
+                tiles[i][j].setBorder(new LineBorder(new Color(111, 111, 111)));
+                tiles[i][j].setIcon(tileIcon);
+                tiles[i][j].setPreferredSize(tileDimension);
+
+                gamePanel.add(tiles[i][j]);
+            }
         }
+
+        pack();
+
+        gamePanel.revalidate();
+        gamePanel.repaint();
     }
 
-    public boolean getTimerRunning() {
-        return timerRunning;
-    }
-
-
-    public void resetTimer() {
-        gameTime = 0;
-        setTimerValue(gameTime);
-    }
+    //====================================================
+    // segment display functions
+    //====================================================
 
     public void setTimerValue(int t) {
         String s = String.format("%03d", t);
@@ -241,84 +263,142 @@ public class Window extends JFrame implements WindowListener {
         }
     }
 
-    public void setMinesValue(int m) {
-        String s = String.format("%03d", m);
-        for (int i=0; i<3; i++) {
-            minesSegment[i].writeNumber(Character.getNumericValue(s.charAt(i)));
-            minesSegment[i].repaint();
+    public void setFlagsRemainingValue(int f) {
+        String s = String.format("%03d", f);
+        for (int i=0; i < 3; i++) {
+            flagsRemainingSegment[i].writeNumber(Character.getNumericValue(s.charAt(i)));
+            flagsRemainingSegment[i].repaint();
         }
     }
 
-    public void minusMine() {
-        minesRemaining--;
-        //System.out.print(minesRemaining);
-        setMinesValue(minesRemaining);
-    }
-    public void plusMine() {
-        minesRemaining++;
-        setMinesValue(minesRemaining);
-    }
+    //====================================================
+    // dialog functions
+    //====================================================
 
-    public void redrawTiles(int r, int c, int m) {
-        gamePanel.removeAll();
-        rows = r;
-        columns = c;
-        minesRemaining = m;
+    public EndChoice winDialog(boolean won) {
+        JDialog dialog;
+        JLabel message;
+        EndChoice[] choice = {EndChoice.CANCEL};
 
-        //System.out.println(rows);
-        //System.out.println(columns);
-
+        if (won) {
+            dialog = new JDialog(this, "Success!", true);
+            message = new JLabel("You've won the game! :)", SwingConstants.CENTER );
+        } else {
+            dialog = new JDialog(this, "Kaboom!", true);
+            message = new JLabel("You've found a mine, whoops! :(", SwingConstants.CENTER );
+        }
         
-        gamePanel.setSize(rows*tileSize, columns*tileSize);
-        gamePanel.setLayout(new GridLayout(rows, columns));
-        tiles = new JLabel[rows][columns];
+        JPanel optionsPanel = new JPanel();
+        optionsPanel.setLayout(new GridLayout(1, 3, 15, 0));
+        JButton playAgain = new JButton("Play Again");
+        JButton exit = new JButton("Exit");
+        JButton cancel = new JButton("Cancel");
+        
+        exit.addActionListener(e -> {
+            choice[0] = EndChoice.EXIT;
+            dialog.dispose();
+        });
+        playAgain.addActionListener(e -> {
+            choice[0] = EndChoice.PLAY_AGAIN;
+            dialog.dispose();
+        });
+        cancel.addActionListener(e -> {
+            choice[0] = EndChoice.CANCEL;
+            dialog.dispose();
+        });
 
-        for (int i=0; i < rows; i++) {
-            for (int j=0; j < columns; j++) {
+        optionsPanel.add(playAgain);
+        optionsPanel.add(exit);
+        optionsPanel.add(cancel);
 
-                tiles[i][j] = new JLabel("");
-                tiles[i][j].setName(Integer.toString(i) + "," + Integer.toString(j));
-                tiles[i][j].setAlignmentX(JLabel.CENTER);
-                tiles[i][j].setAlignmentY(JLabel.CENTER);
-                //tiles[i][j].setBorder(raisedbevel);
-                tiles[i][j].setIcon(tileIcon);
-                tiles[i][j].setPreferredSize(tileDimension);
-                gamePanel.add(tiles[i][j]);
+        JPanel winPanel = new JPanel();
+        winPanel.setLayout(new BorderLayout(20, 20));
+        winPanel.add(message, BorderLayout.NORTH);
+        winPanel.add(optionsPanel, BorderLayout.SOUTH);
+        winPanel.setBorder(new EmptyBorder(10, 10, 10, 10));
+
+        dialog.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
+        dialog.addWindowListener(new java.awt.event.WindowAdapter() {
+            @Override
+            public void windowClosing(java.awt.event.WindowEvent windowEvent) {
+                choice[0] = EndChoice.CANCEL;
+                dialog.dispose();
+            }
+        });
+
+        dialog.add(winPanel);
+        dialog.pack();
+        dialog.setLocationRelativeTo(this);
+        dialog.setVisible(true);
+
+        return choice[0];
+    }
+
+
+    //====================================================
+    // listener functions
+    //====================================================
+
+    public void newGameButton(java.awt.event.ActionListener a) {
+        newGameButton.addActionListener(a);
+    }
+
+    public void selectEasy(java.awt.event.ActionListener a) {
+        easy.addActionListener(a);
+    }
+
+    public void selectIntermediate(java.awt.event.ActionListener a) {
+        intermediate.addActionListener(a);
+    }
+
+    public void selectExpert(java.awt.event.ActionListener a) {
+        expert.addActionListener(a);
+    }
+
+    public void tileClick(java.awt.event.MouseListener a) {
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                tiles[i][j].addMouseListener(a);
             }
         }
-        gamePanel.revalidate();
-        gamePanel.repaint();
-        pack();
     }
 
-    public void setTileListeners(Game game) {
-        for (int i=0; i < rows; i++) {
-            for (int j=0; j < columns; j++) {
-                tiles[i][j].addMouseListener(game);
-            }
-        }
+
+    //=====================================================
+    // Icons
+    //=====================================================
+
+    // helper for icons
+    private Icon iconFor(TileFace face) {
+        return switch (face) {
+            case COVERED -> tileIcon;
+            case FLAG -> flagIcon;
+            case QUESTION -> question;
+            case MINE -> mineIcon;
+            case RED_MINE -> redMineIcon;
+            case NUM0 -> zero;
+            case NUM1 -> one;
+            case NUM2 -> two;
+            case NUM3 -> three;
+            case NUM4 -> four;
+            case NUM5 -> five;
+            case NUM6 -> six;
+            case NUM7 -> seven;
+            case NUM8 -> eight;
+        };
     }
 
-    public void setWindowAndMenuListeners(Game game) {
-        addWindowListener(game);
-        easy.addActionListener(game);
-        intermediate.addActionListener(game);
-        expert.addActionListener(game);
-        newGameButton.addActionListener(game);
+    public void setTileFace(int r, int c, TileFace face) {
+        JLabel tile = tiles[r][c];
+        tile.setIcon(iconFor(face));
     }
 
-    //==================================
-    // set and get icons
-    //==================================
     private ImageIcon resizeIcon(ImageIcon icon, int w, int h) {
         Image img = icon.getImage();
         Image scaled = img.getScaledInstance(w, h, Image.SCALE_SMOOTH);
         return new ImageIcon(scaled);
     }
 
-    public Border getLoweredBorder() {
-        return loweredbevel;
-    }
     public void setIcons() {
         mineIcon = resizeIcon( new ImageIcon(getClass().getResource("/media/mine.png")), tileSize, tileSize);
         redMineIcon = resizeIcon(new ImageIcon(getClass().getResource("/media/redmine.png")), tileSize, tileSize);
@@ -336,72 +416,5 @@ public class Window extends JFrame implements WindowListener {
         question = resizeIcon(new ImageIcon(getClass().getResource("/media/question.png")), tileSize, tileSize);
         newGameIcon = resizeIcon(new ImageIcon(getClass().getResource("/media/button.png")),40, 40);
     }
-    public Icon getNewGameIcon() {
-        return newGameIcon;
-    }
-    public Icon getRedMineIcon() {
-        return redMineIcon;
-    }
-    public Icon getMineIcon() {
-        return mineIcon;
-    }
-    public Icon getTileIcon() {
-        return tileIcon;
-    }
-    public Icon getOneIcon() {
-        return one;
-    }
-    public Icon getTwoIcon() {
-        return two;
-    }
-    public Icon getThreeIcon() {
-        return three;
-    }
-    public Icon getFourIcon() {
-        return four;
-    }
-    public Icon getFiveIcon() {
-        return five;
-    }
-    public Icon getSixIcon() {
-        return six;
-    }
-    public Icon getSevenIcon() {
-        return seven;
-    }
-    public Icon getEightIcon() {
-        return eight;
-    }
-    public Icon getZeroIcon() {
-        return zero;
-    }
-    public Icon getQuestionIcon() {
-        return question;
-    }
-    public Icon getFlagIcon() {
-        return flagIcon;
-    }
-    public JPanel getGamePanel() {
-        return gamePanel;
-    }
-    public JLabel[][] getTiles() {return tiles;}
-    public JButton getNewgameButton() {
-        return newGameButton;
-    }
-    // window listener methods
-    public void windowClosed(WindowEvent e) {
-    }
-    public void windowClosing(WindowEvent e) {
-        System.exit(0);
-    }
-    public void windowOpened(WindowEvent e) {
-    }
-    public void windowIconified(WindowEvent e) {
-    }
-    public void windowDeiconified(WindowEvent e) {
-    }
-    public void windowActivated(WindowEvent e) {
-    }
-    public void windowDeactivated(WindowEvent e) {
-    }
+
 }
