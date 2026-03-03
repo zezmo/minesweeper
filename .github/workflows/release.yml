@@ -62,7 +62,7 @@ jobs:
             --input .\dist `
             --main-jar Minesweeper.jar `
             --main-class App `
-            --icon .\minesweeper-icon.ico `
+            --icon .\media\minesweeper-icon.ico `
             --dest .\out-installer `
             --app-version $version `
             --win-shortcut `
@@ -80,7 +80,7 @@ jobs:
             --input .\dist `
             --main-jar Minesweeper.jar `
             --main-class App `
-            --icon .\minesweeper-icon.ico `
+            --icon .\media\minesweeper-icon.ico `
             --dest .\out-portable `
             --app-version $version
 

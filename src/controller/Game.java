@@ -104,7 +104,9 @@ public class Game {
                 default -> Window.TileFace.COVERED;
             };
         }
-
+        if (cell.isDetonated()) {
+            return Window.TileFace.RED_MINE;
+        }
         if (cell.isMine()) {
             return Window.TileFace.MINE;
         }

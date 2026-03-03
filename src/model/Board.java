@@ -137,6 +137,7 @@ public class Board {
             gameState = GameState.PLAYING;
         }
         if (boardCells[r][c].isMine()) {
+            boardCells[r][c].explode();
             gameLost();
             showAllMines(r, c);
         }
@@ -146,7 +147,6 @@ public class Board {
         if (!boardCells[r][c].isShowing()) {
             boardCells[r][c].reveal();
             cellsTarget--;
-            System.out.println(cellsTarget);
         }
         gameWinCheck();
         if (gameState == GameState.WON) {
@@ -199,6 +199,10 @@ public class Board {
                 boardCells[r][c].setFlag(FlagState.NONE);
                 break;
             default:
+                if (flagsCount == 0) {
+                    boardCells[r][c].setFlag(FlagState.QUESTION);
+                    break;
+                }
                 boardCells[r][c].setFlag(FlagState.FLAG);
                 decFlagsCount();
                 break;
