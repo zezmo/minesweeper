@@ -25,11 +25,33 @@ public class Game {
         timer = new Timer(1000, (ActionEvent e) -> onTimerTick());
 
         setViewListeners();
+        window.setTileMouseListener(tileMouse);
         window.setFlagsRemainingValue(board.getFlagsCount());
         window.setTimerValue(board.getElapsedTime());
 
         window.setVisible(true);
     }
+
+    private final MouseAdapter tileMouse = new MouseAdapter() {
+        @Override
+        public void mousePressed(MouseEvent e) {
+            int[] rc = parseTile(e);
+            if (rc == null) return;
+            int r = rc[0], c = rc[1];
+
+            if (SwingUtilities.isLeftMouseButton(e)) handleLeftPress(r, c);
+            else if (SwingUtilities.isRightMouseButton(e)) handleRightPress(r, c);
+        }
+
+        @Override
+        public void mouseReleased(MouseEvent e) {
+            int[] rc = parseTile(e);
+            if (rc == null) return;
+            int r = rc[0], c = rc[1];
+
+            if (SwingUtilities.isLeftMouseButton(e)) handleLeftRelease(r, c);
+        }
+    };
 
     private void newGame(BoardConfig config) {
         this.config = config;
@@ -38,12 +60,11 @@ public class Game {
 
         
         window.rebuildBoard(board.getRows(), board.getColumns());
-        setViewListeners();
+        window.setTileMouseListener(tileMouse);
         
         window.setFlagsRemainingValue(board.getFlagsCount());
         window.setTimerValue(board.getElapsedTime());
         window.repaint();
-        window.setVisible(true);
     }
 
     private void setViewListeners() {
@@ -51,32 +72,6 @@ public class Game {
         window.selectIntermediate(e -> newGame(BoardConfig.fromDifficulty(Difficulty.INTERMEDIATE)));
         window.selectExpert(e -> newGame(BoardConfig.fromDifficulty(Difficulty.EXPERT)));
         window.newGameButton(e -> newGame(config));
-
-        window.tileClick(new MouseAdapter() {
-            @Override
-            public void mousePressed(MouseEvent e) {
-                int[] rc = parseTile(e);
-                int r = rc[0];
-                int c = rc[1];
-
-                if (SwingUtilities.isLeftMouseButton(e)) {
-                    handleLeftPress(r, c);
-                } else if (SwingUtilities.isRightMouseButton(e)) {
-                    handleRightPress(r, c);
-                }
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                int[] rc = parseTile(e);
-                if (rc == null) return;
-                int r = rc[0], c = rc[1];
-
-                if (SwingUtilities.isLeftMouseButton(e)) {
-                    handleLeftRelease(r, c);
-                }
-            }
-        });
     }
 
     //=======================================

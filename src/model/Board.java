@@ -66,9 +66,10 @@ public class Board {
     // helper for placing mines not in the 8 cells around or on the first click
     private boolean validPlacement(int safeRow, int safeCol, int rRow, int rCol) {
         if (rRow >= 0 && rRow < rows && rCol >= 0 && rCol < cols) {
-            if (Math.abs(rRow - safeRow) > 1 && Math.abs(rCol - safeCol) > 1) {
-                return true;
+            if (Math.abs(rRow - safeRow) <= 1 && Math.abs(rCol - safeCol) <= 1) {
+                return false;
             }
+            return true;
         }
         return false;
     }

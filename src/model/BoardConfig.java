@@ -16,7 +16,7 @@ public class BoardConfig {
             case EASY:
                 return new BoardConfig(9, 9, 10);
             case INTERMEDIATE:
-                return new BoardConfig(16, 16, 99);
+                return new BoardConfig(16, 16, 40);
             case EXPERT:
                 return new BoardConfig(16, 30, 99);
             default:

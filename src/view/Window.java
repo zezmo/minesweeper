@@ -61,6 +61,7 @@ public class Window extends JFrame{
     private SegmentDisplay timerSegment[];
     Border raisedbevel = BorderFactory.createRaisedBevelBorder();
     Border loweredbevel = BorderFactory.createLoweredBevelBorder();
+    Border tileBorder = BorderFactory.createLineBorder(new Color(111, 111, 111));
 
     //private Window gameWindow;
     private JPanel outerPanel;
@@ -207,7 +208,7 @@ public class Window extends JFrame{
                 tiles[i][j].setName(Integer.toString(i) + "," + Integer.toString(j));
                 tiles[i][j].setAlignmentX(JLabel.CENTER);
                 tiles[i][j].setAlignmentY(JLabel.CENTER);
-                tiles[i][j].setBorder(new LineBorder(new Color(111, 111, 111)));
+                tiles[i][j].setBorder(tileBorder);
                 tiles[i][j].setIcon(tileIcon);
                 tiles[i][j].setPreferredSize(tileDimension);
 
@@ -237,7 +238,7 @@ public class Window extends JFrame{
                 tiles[i][j].setName(Integer.toString(i) + "," + Integer.toString(j));
                 tiles[i][j].setAlignmentX(JLabel.CENTER);
                 tiles[i][j].setAlignmentY(JLabel.CENTER);
-                tiles[i][j].setBorder(new LineBorder(new Color(111, 111, 111)));
+                tiles[i][j].setBorder(tileBorder);
                 tiles[i][j].setIcon(tileIcon);
                 tiles[i][j].setPreferredSize(tileDimension);
 
@@ -362,6 +363,18 @@ public class Window extends JFrame{
             }
         }
     }
+
+    public void setTileMouseListener(java.awt.event.MouseListener a) {
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                for (var old : tiles[i][j].getMouseListeners()) {
+                    tiles[i][j].removeMouseListener(old);
+                }
+                tiles[i][j].addMouseListener(a);
+            }
+        }
+    }
+
 
 
     //=====================================================
