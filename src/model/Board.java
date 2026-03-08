@@ -114,6 +114,9 @@ public class Board {
             gameState = GameState.LOST;
         }
     }
+    public void endGame() {
+        gameState = GameState.END;
+    }
 
     // show all of the mines at the end of the game
     public void showAllMines(int r, int c) {

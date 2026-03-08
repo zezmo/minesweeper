@@ -4,5 +4,6 @@ public enum GameState {
     READY,
     PLAYING,
     WON,
-    LOST
+    LOST,
+    END // if player cancels the win/lose menu, make the board not react
 }

@@ -3,6 +3,7 @@ package controller;
 import model.Board;
 import model.BoardConfig;
 import model.Difficulty;
+import model.FlagState;
 import model.GameState;
 import view.Window;
 
@@ -155,6 +156,12 @@ public class Game {
     }
 
     private void handleLeftRelease(int r, int c) {
+        if (board.getGameState() == GameState.END) {
+            return;
+        }
+        if (board.getBoardCell(r, c).getFlagState() == FlagState.FLAG) {
+            return;
+        }
         // show contents of clicked cell and check game state 
         board.revealCell(r, c);
         if (board.getGameState() == GameState.PLAYING && !timer.isRunning()) {
@@ -189,7 +196,7 @@ public class Game {
         switch (choice) {
             case PLAY_AGAIN -> newGame(config);
             case EXIT       -> System.exit(0);
-            case CANCEL     -> {}
+            case CANCEL     -> board.endGame();
         }
     }
 }
